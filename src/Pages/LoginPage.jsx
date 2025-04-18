@@ -1,28 +1,80 @@
-// import React , {useState} from 'react'
+import React, { useState } from "react";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "../redux/actions/authActions";
+import { useNavigate } from "react-router-dom";
+import "../Styles/LoginPage.css"; // Import the enhanced CSS for login page
 
+const LoginPage = () => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-// import React from 'react'
+  const dispatch = useDispatch(); // Initialize useDispatch hook
+  const navigate = useNavigate(); // Initialize useNavigate hook
 
-// const LoginPage = () => {
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      // Make the API call
+      const response = await axios.post("http://localhost:8080/api/login", {
+        username,
+        password,
+      });
 
+      const { role, token } = response.data; // Destructure the role from the response
+      localStorage.setItem("authToken", token);
 
-//     const [email ,setEmail] = useState('');
-//     const [password, setPassword] = useState('');
+      // Dispatch login action to Redux
+      dispatch(loginSuccess({ username, role }));
 
+      // Redirect based on role
+      if (role === "ADMIN") {
+        navigate("/dashboard/usermanagement");
+      } else if (role === "READONLY") {
+        navigate("/dashboard/costexplorer");
+      } else if (role === "CUSTOMER") {
+        navigate("/dashboard/aws-services");
+      } else {
+        setError("Unknown role.");
+      }
+    } catch (err) {
+      setError("Invalid username or password.", err);
+    }
+  };
 
-//   return (
-//     <div>
+  return (
+    <div className="login-container">
+      <div className="login-card">
+        <div className="Logo">
+          <img
+            src="/home/divyansh/BootCamp/Frontend/my-cloud-app/src/Pages/logo_2025-01-30T12_32_13 (copy).png"
+            alt="CloudKeeper Logo"
+          />
+        </div>
+        <h2>Login to view your potential savings</h2>
+        <form onSubmit={handleLogin}>
+          <label htmlFor="">username</label>
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <label htmlFor="">Password</label>
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button type="submit">Login</button>
+        </form>
 
-//     <div className='from class'>
+        {error && <p>{error}</p>}
+      </div>
+    </div>
+  );
+};
 
-//     </div>
-
-//     </div>
-//   )
-// }
-
-// export default LoginPage
-
-// //form should be validated also and the data should be sent to backend
-
-
+export default LoginPage;

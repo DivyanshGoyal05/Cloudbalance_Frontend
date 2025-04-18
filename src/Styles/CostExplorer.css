@@ -1,0 +1,32 @@
+.cost-explorer-container {
+    padding: 2rem;
+    background-color: #f8fafc;
+    min-height: 100vh;
+    color: #1e3a8a;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #1d4ed8;
+}
+
+.subtitle {
+    font-size: 1rem;
+    color: #64748b;
+    margin-bottom: 2rem;
+}
+
+.chart-box {
+    background-color: white;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.loading {
+    font-size: 1.2rem;
+    color: #3b82f6;
+}

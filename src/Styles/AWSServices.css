@@ -1,0 +1,62 @@
+.aws-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f7fbff;
+    color: #1a202c;
+}
+
+.heading {
+    font-size: 24px;
+    font-weight: bold;
+    color: #2563eb;
+}
+
+.subheading {
+    color: #6b7280;
+    margin-bottom: 20px;
+}
+
+.account-selector {
+    margin-bottom: 20px;
+}
+
+.account-selector select {
+    padding: 8px;
+    margin-left: 10px;
+}
+
+.section {
+    margin-top: 30px;
+}
+
+.section h3 {
+    color: #1e3a8a;
+    margin-bottom: 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+th,
+td {
+    padding: 10px;
+    border: 1px solid #e5e7eb;
+    text-align: left;
+}
+
+th {
+    background-color: #eff6ff;
+    font-weight: bold;
+}
+
+.info-text {
+    color: #4b5563;
+    font-style: italic;
+}

@@ -1,0 +1,62 @@
+/* src/Components/Header.css */
+
+/* Header container */
+.header {
+    background-color: #4398d7;
+    /* Dark blue background */
+    color: #fff;
+    /* White text */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow */
+}
+
+/* Header title */
+.header h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+}
+
+/* Right side of the header (username and logout button) */
+.header-right {
+    display: flex;
+    align-items: center;
+}
+
+/* Username display */
+.header-right span {
+    font-size: 16px;
+    margin-right: 15px;
+}
+
+/* Logout button */
+.header-right button {
+    background-color: #fbbf24;
+    /* Orange button */
+    color: #fff;
+    /* White text */
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.header-right button:hover {
+    background-color: #d97706;
+    /* Darker shade of orange on hover */
+}
+
+.header-right button:focus {
+    outline: none;
+}
+
+.header img {
+    height: 2vh;
+    width: 20vh;
+}
