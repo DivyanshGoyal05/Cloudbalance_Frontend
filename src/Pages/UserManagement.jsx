@@ -1,16 +1,14 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../api/axiosConfig";
 import "../Styles/UserManagement.css";
 
 function UserManagement() {
-  const dispatch = useDispatch();
-  const { users = [], accounts } = useSelector((state) => state);
+  const [users, setUsers] = useState([]);
+  const [accounts, setAccounts] = useState([]);
   const navigate = useNavigate();
   const URL = "http://localhost:8080";
 
-  // Fetch users and accounts
   useEffect(() => {
     fetchUsers();
     fetchAccounts();
@@ -18,12 +16,12 @@ function UserManagement() {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get(`${URL}/users/fetchall`, {
+      const response = await axios.get(`${URL}/users/all`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
       });
-      dispatch({ type: "SET_USERS", payload: response.data });
+      setUsers(response.data);
     } catch (error) {
       console.error("Error fetching users:", error);
     }
@@ -36,7 +34,7 @@ function UserManagement() {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
       });
-      dispatch({ type: "SET_ACCOUNTS", payload: response.data });
+      setAccounts(response.data);
     } catch (error) {
       console.error("Error fetching accounts:", error);
     }
@@ -44,8 +42,9 @@ function UserManagement() {
 
   return (
     <div className="user-management-container">
-      <h2>User Management</h2>
-      <button onClick={() => navigate("/users/add")}>+ Add User</button>
+      <button onClick={() => navigate("/dashboard/usermanagement/adduser")}>
+        + Add User
+      </button>
 
       <table>
         <thead>
@@ -65,12 +64,14 @@ function UserManagement() {
               <td>{user.role}</td>
               <td>
                 {accounts
-                  .filter((acc) => user.assignedAccounts.includes(acc.id))
+                  .filter((acc) => user.assignedAccounts?.includes(acc.id))
                   .map((a) => a.name)
                   .join(", ") || "None"}
               </td>
               <td>
-                <button onClick={() => navigate(`/users/edit/${user.id}`)}>
+                <button
+                  onClick={() => navigate(`/dashboard/usermanagement/edituser`)}
+                >
                   Edit
                 </button>
               </td>

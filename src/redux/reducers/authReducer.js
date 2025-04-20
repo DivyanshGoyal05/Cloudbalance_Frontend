@@ -1,32 +1,3 @@
-// const initialState = {
-//     username: "",
-//     role: "",
-//     isLoggedIn: false,
-// };
-
-// const authReducer = (state = initialState, action) => {
-//     switch (action.type) {
-//         case "LOGIN":
-//             return {
-//                 ...state,
-//                 username: action.payload.username,
-//                 role: action.payload.role,
-//                 isLoggedIn: true,
-//             };
-//         case "LOGOUT":
-//             return {
-//                 ...state,
-//                 username: "",
-//                 role: "",
-//                 isLoggedIn: false,
-//             };
-//         default:
-//             return state;
-//     }
-// };
-
-// export default authReducer;
-
 const initialState = {
     isLoggedIn: false,
     username: null,

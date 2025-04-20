@@ -15,7 +15,7 @@ function OnboardingPageThree() {
   const reportName = "ck-tuner-275595855473-hourly-cur";
   const reportPrefix = "275595855473";
   // Simple URL without using environment variables
-  const URL = "https://api.example.com"; // Replace with your actual API URL
+  const URL = "http://localhost:8080"; // Replace with your actual API URL
 
   const copyToClipboard = (text) => {
     navigator.clipboard

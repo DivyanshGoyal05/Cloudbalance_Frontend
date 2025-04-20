@@ -1,4 +1,10 @@
 /* UserManagement.css */
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
 .user-management-container {
     padding: 20px;
     background-color: #f4f7fb;

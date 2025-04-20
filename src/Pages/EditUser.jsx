@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
-import "./UserManagement.css";
+import axios from "../api/axiosConfig";
+import "./userManagement/EditUser.css";
 
 function EditUser() {
   const { id } = useParams();

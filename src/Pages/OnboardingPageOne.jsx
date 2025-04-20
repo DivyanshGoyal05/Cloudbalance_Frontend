@@ -49,7 +49,7 @@ export default function OnboardingPageOne() {
     );
 
     // Navigate to the next page
-    navigate("/onboarding-page-two");
+    navigate("/dashboard/onboardingpagetwo");
   };
 
   const handleCancel = () => {

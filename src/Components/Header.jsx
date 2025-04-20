@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../redux/actions/authActions";
 import { useNavigate } from "react-router-dom";
-import "../Styles/Header.css"; // Import the updated CSS for the header
+import "../Styles/Header.css";
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -11,22 +11,43 @@ const Header = () => {
   const { username, isLoggedIn } = useSelector((state) => state.auth);
 
   const handleLogout = () => {
-    dispatch(logout()); // clear Redux state
-    localStorage.clear(); // optional: clear persisted state
-    navigate("/"); // redirect to login
+    dispatch(logout());
+    localStorage.clear();
+    navigate("/");
   };
 
   return (
     <div className="header">
       <div className="header-left">
-        {/* <h2 className="logo">CloudBalance</h2> */}
-        <img src="../" alt="CloudKeeper Image" />
+        {/* Logo - you'll add the actual image */}
+        <img
+          src="my-cloud-app/src/assets/Images/cloudkeeper.png"
+          alt="CloudKeeper"
+        />
+
+        {/* Menu toggle button - you'll add the actual icon */}
+        <button className="menu-toggle">{/* Menu icon will go here */}</button>
       </div>
 
       {isLoggedIn && (
         <div className="header-right">
-          <span>Welcome, {username}!</span>
+          {/* Extension button */}
+
+          {/* User info */}
+          <div className="user-container">
+            <div className="user-avatar">
+              {/* User avatar or initials will go here */}
+            </div>
+            <div className="user-info">
+              <span className="welcome-text">Welcome</span>
+              <span className="user-name"></span>
+            </div>
+            <span className="help-icon">{/* Help icon will go here */}</span>
+          </div>
+
+          {/* Logout button */}
           <button onClick={handleLogout} className="logout-btn">
+            {/* Logout icon will go here */}
             Logout
           </button>
         </div>

@@ -52,7 +52,7 @@ const LoginPage = () => {
             alt="CloudKeeper Logo"
           />
         </div>
-        <h2>Login to view your potential savings</h2>
+        
         <form onSubmit={handleLogin}>
           <label htmlFor="">username</label>
           <input

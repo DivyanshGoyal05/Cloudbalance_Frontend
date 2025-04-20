@@ -1,13 +1,183 @@
-import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
-import "./UserManagement.css";
+// import { useState, useEffect } from "react";
+// import { useDispatch, useSelector } from "react-redux";
+// import { useNavigate, useParams } from "react-router-dom";
+// import axios from "axios";
+// import "./userManagement/addUser.css";
 
-function EditUser() {
-  const { id } = useParams();
-  const dispatch = useDispatch();
-  const { accounts } = useSelector((state) => state);
+// function AddUser() {
+//   const { id } = useParams();
+//   const dispatch = useDispatch();
+//   const { accounts } = useSelector((state) => state);
+//   const navigate = useNavigate();
+//   const URL = "http://localhost:8080";
+
+//   const [user, setUser] = useState({
+//     username: "",
+//     name: "",
+//     password: "",
+//     role: "CUSTOMER",
+//     assignedAccounts: [],
+//   });
+
+//   // Fetch user data when component loads
+//   useEffect(() => {
+//     const fetchUser = async () => {
+//       try {
+//         const response = await axios.get(`${URL}/users/${id}`, {
+//           headers: {
+//             Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+//           },
+//         });
+//         setUser({ ...response.data, password: "" }); // Don't show existing password
+//       } catch (error) {
+//         console.error("Error fetching user:", error);
+//       }
+//     };
+//     fetchUser();
+//   }, [id]);
+
+//   const handleInputChange = (e) => {
+//     setUser({ ...user, [e.target.name]: e.target.value });
+//   };
+
+//   const toggleAccount = (accountId) => {
+//     if (user.assignedAccounts.includes(accountId)) {
+//       setUser({
+//         ...user,
+//         assignedAccounts: user.assignedAccounts.filter(
+//           (id) => id !== accountId
+//         ),
+//       });
+//     } else {
+//       setUser({
+//         ...user,
+//         assignedAccounts: [...user.assignedAccounts, accountId],
+//       });
+//     }
+//   };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     try {
+//       await axios.put(`${URL}/users/${id}`, user, {
+//         headers: {
+//           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+//         },
+//       });
+
+//       // Refresh the users list in Redux
+//       const response = await axios.get(`${URL}/users/fetchall`, {
+//         headers: {
+//           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+//         },
+//       });
+//       dispatch({ type: "SET_USERS", payload: response.data });
+
+//       navigate("/users"); // Go back to user list
+//     } catch (error) {
+//       console.error("Error updating user:", error);
+//     }
+//   };
+
+//   return (
+//     <div className="form-container">
+//       <h2>Edit User</h2>
+//       <form onSubmit={handleSubmit}>
+//         <div className="form-group">
+//           <label>Username:</label>
+//           <input
+//             type="text"
+//             name="username"
+//             value={user.username}
+//             onChange={handleInputChange}
+//             disabled
+//             className="form-input"
+//           />
+//         </div>
+
+//         <div className="form-group">
+//           <label>Name:</label>
+//           <input
+//             type="text"
+//             name="name"
+//             value={user.name}
+//             onChange={handleInputChange}
+//             required
+//             className="form-input"
+//           />
+//         </div>
+
+//         <div className="form-group">
+//           <label>New Password (leave blank to keep current):</label>
+//           <input
+//             type="password"
+//             name="password"
+//             value={user.password}
+//             onChange={handleInputChange}
+//             className="form-input"
+//             placeholder="Enter new password if changing"
+//           />
+//         </div>
+
+//         <div className="form-group">
+//           <label>Role:</label>
+//           <select
+//             name="role"
+//             value={user.role}
+//             onChange={handleInputChange}
+//             className="form-input"
+//           >
+//             <option value="Admin">Admin</option>
+//             <option value="ReadOnly">ReadOnly</option>
+//             <option value="Customer">Customer</option>
+//           </select>
+//         </div>
+
+//         {user.role === "Customer" && (
+//           <div className="form-group">
+//             <label>Assign Accounts:</label>
+//             <div className="accounts-checkbox-group">
+//               {accounts.map((account) => (
+//                 <div key={account.id} className="checkbox-item">
+//                   <input
+//                     type="checkbox"
+//                     id={`account-${account.id}`}
+//                     checked={user.assignedAccounts.includes(account.id)}
+//                     onChange={() => toggleAccount(account.id)}
+//                   />
+//                   <label htmlFor={`account-${account.id}`}>
+//                     {account.name} ({account.accountId})
+//                   </label>
+//                 </div>
+//               ))}
+//             </div>
+//           </div>
+//         )}
+
+//         <div className="form-actions">
+//           <button type="submit" className="submit-btn">
+//             Save Changes
+//           </button>
+//           <button
+//             type="button"
+//             onClick={() => navigate("/add-u")}
+//             className="cancel-btn"
+//           >
+//             Cancel
+//           </button>
+//         </div>
+//       </form>
+//     </div>
+//   );
+// }
+
+// export default AddUser;
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import "./userManagement/addUser.css";
+
+function AddUser() {
   const navigate = useNavigate();
   const URL = "http://localhost:8080";
 
@@ -15,73 +185,109 @@ function EditUser() {
     username: "",
     name: "",
     password: "",
-    role: "Customer",
+    role: "CUSTOMER",
     assignedAccounts: [],
   });
 
-  // Fetch user data when component loads
+  const [allAccounts, setAllAccounts] = useState([]);
+  const [filteredAccounts, setFilteredAccounts] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Fetch available accounts when component loads
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchAccounts = async () => {
       try {
-        const response = await axios.get(`${URL}/users/${id}`, {
+        const response = await axios.get(`${URL}/cloudAccount/getall`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         });
-        setUser({ ...response.data, password: "" }); // Don't show existing password
+        setAllAccounts(response.data);
+        setFilteredAccounts(response.data);
       } catch (error) {
-        console.error("Error fetching user:", error);
+        console.error("Error fetching accounts:", error);
       }
     };
-    fetchUser();
-  }, [id]);
+    fetchAccounts();
+  }, []);
+
+  // Handle search functionality
+  useEffect(() => {
+    if (searchTerm.trim() === "") {
+      setFilteredAccounts(allAccounts);
+    } else {
+      const filtered = allAccounts.filter(
+        (account) =>
+          account.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          account.accountId.toString().includes(searchTerm)
+      );
+      setFilteredAccounts(filtered);
+    }
+  }, [searchTerm, allAccounts]);
 
   const handleInputChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  const toggleAccount = (accountId) => {
-    if (user.assignedAccounts.includes(accountId)) {
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  // Add account to user's assigned accounts
+  const addAccount = (account) => {
+    if (!user.assignedAccounts.some((acc) => acc.id === account.id)) {
       setUser({
         ...user,
-        assignedAccounts: user.assignedAccounts.filter(
-          (id) => id !== accountId
-        ),
-      });
-    } else {
-      setUser({
-        ...user,
-        assignedAccounts: [...user.assignedAccounts, accountId],
+        assignedAccounts: [...user.assignedAccounts, account],
       });
     }
   };
 
+  // Remove account from user's assigned accounts
+  const removeAccount = (account) => {
+    setUser({
+      ...user,
+      assignedAccounts: user.assignedAccounts.filter(
+        (acc) => acc.id !== account.id
+      ),
+    });
+  };
+
+  // Select all accounts
+  const selectAllAccounts = () => {
+    setUser({
+      ...user,
+      assignedAccounts: [
+        ...new Set([...user.assignedAccounts, ...filteredAccounts]),
+      ],
+    });
+  };
+
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Extract just the IDs for submission
+    const userToSubmit = {
+      ...user,
+      assignedAccounts: user.assignedAccounts.map((account) => account.id),
+    };
+
     try {
-      await axios.put(`${URL}/users/${id}`, user, {
+      await axios.post(`${URL}/users/create`, userToSubmit, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
       });
-
-      // Refresh the users list in Redux
-      const response = await axios.get(`${URL}/users/fetchall`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
-      });
-      dispatch({ type: "SET_USERS", payload: response.data });
-
       navigate("/users"); // Go back to user list
     } catch (error) {
-      console.error("Error updating user:", error);
+      console.error("Error adding user:", error);
     }
   };
 
   return (
     <div className="form-container">
-      <h2>Edit User</h2>
+      <h2>Add User</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Username:</label>
@@ -90,7 +296,7 @@ function EditUser() {
             name="username"
             value={user.username}
             onChange={handleInputChange}
-            disabled
+            required
             className="form-input"
           />
         </div>
@@ -108,14 +314,14 @@ function EditUser() {
         </div>
 
         <div className="form-group">
-          <label>New Password (leave blank to keep current):</label>
+          <label>Password:</label>
           <input
             type="password"
             name="password"
             value={user.password}
             onChange={handleInputChange}
+            required
             className="form-input"
-            placeholder="Enter new password if changing"
           />
         </div>
 
@@ -127,40 +333,141 @@ function EditUser() {
             onChange={handleInputChange}
             className="form-input"
           >
-            <option value="Admin">Admin</option>
-            <option value="ReadOnly">ReadOnly</option>
-            <option value="Customer">Customer</option>
+            <option value="ADMIN">Admin</option>
+            <option value="READONLY">ReadOnly</option>
+            <option value="CUSTOMER">Customer</option>
           </select>
         </div>
 
-        {user.role === "Customer" && (
-          <div className="form-group">
-            <label>Assign Accounts:</label>
-            <div className="accounts-checkbox-group">
-              {accounts.map((account) => (
-                <div key={account.id} className="checkbox-item">
+        {user.role === "CUSTOMER" && (
+          <div className="form-group account-selection">
+            <div className="account-selection-container">
+              <div className="account-column">
+                <h3>
+                  Choose Account IDs to Associate{" "}
+                  <span className="count">
+                    {filteredAccounts.length} Available
+                  </span>
+                </h3>
+                <div className="search-container">
+                  <input
+                    type="text"
+                    placeholder="Search"
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                    className="search-input"
+                  />
+                </div>
+                <div className="checkbox-item select-all">
                   <input
                     type="checkbox"
-                    id={`account-${account.id}`}
-                    checked={user.assignedAccounts.includes(account.id)}
-                    onChange={() => toggleAccount(account.id)}
+                    id="select-all"
+                    onChange={selectAllAccounts}
                   />
-                  <label htmlFor={`account-${account.id}`}>
-                    {account.name} ({account.accountId})
-                  </label>
+                  <label htmlFor="select-all">Select All</label>
                 </div>
-              ))}
+                <div className="accounts-list">
+                  {filteredAccounts.map((account) => (
+                    <div key={account.id} className="checkbox-item">
+                      <input
+                        type="checkbox"
+                        id={`account-${account.id}`}
+                        checked={user.assignedAccounts.some(
+                          (acc) => acc.id === account.id
+                        )}
+                        onChange={() => addAccount(account)}
+                      />
+                      <label htmlFor={`account-${account.id}`}>
+                        {account.name} ({account.accountId})
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="transfer-buttons">
+                <button
+                  type="button"
+                  className="transfer-btn"
+                  onClick={() => {
+                    const selectedAccounts = filteredAccounts.filter(
+                      (acc) =>
+                        !user.assignedAccounts.some((a) => a.id === acc.id)
+                    );
+                    if (selectedAccounts.length > 0) {
+                      setUser({
+                        ...user,
+                        assignedAccounts: [
+                          ...user.assignedAccounts,
+                          ...selectedAccounts,
+                        ],
+                      });
+                    }
+                  }}
+                >
+                  &gt;
+                </button>
+                <button
+                  type="button"
+                  className="transfer-btn"
+                  onClick={() => {
+                    setUser({
+                      ...user,
+                      assignedAccounts: [],
+                    });
+                  }}
+                >
+                  &lt;
+                </button>
+              </div>
+
+              <div className="account-column">
+                <h3>
+                  Associated Account IDs{" "}
+                  <span className="count">
+                    {user.assignedAccounts.length} Added
+                  </span>
+                </h3>
+                {user.assignedAccounts.length === 0 ? (
+                  <div className="no-accounts">
+                    <div className="folder-icon">📁</div>
+                    <p>No Account IDs Added</p>
+                    <p className="helper-text">
+                      Selected Account IDs will be shown here.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="accounts-list">
+                    {user.assignedAccounts.map((account) => (
+                      <div key={account.id} className="account-item">
+                        <span>
+                          {account.name} ({account.accountId})
+                        </span>
+                        <button
+                          type="button"
+                          className="remove-btn"
+                          onClick={() => removeAccount(account)}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
 
         <div className="form-actions">
           <button type="submit" className="submit-btn">
-            Save Changes
+            Add User
           </button>
           <button
             type="button"
-            onClick={() => navigate("/users")}
+            onClick={() => {
+              alert("User Create successfully");
+            }}
             className="cancel-btn"
           >
             Cancel
@@ -171,4 +478,4 @@ function EditUser() {
   );
 }
 
-export default EditUser;
+export default AddUser;
