@@ -1,8 +1,8 @@
 import { useState } from "react";
-import "../Styles/OnboardingPageOne.css";
+import "../OnBoarding/OnboardingPageOne.css"; // Import your CSS file for styling
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { saveIamRoleInfo } from "../redux/actions/onboardingActions";
+import { saveIamRoleInfo } from "../../REDUX/actions/onboardingActions";
 
 export default function OnboardingPageOne() {
   const navigate = useNavigate();
@@ -41,10 +41,10 @@ export default function OnboardingPageOne() {
     // Save form data to Redux before navigating
     dispatch(
       saveIamRoleInfo({
-        roleARN,
+        arnRole: roleARN,
         // roleName,
-        accountname,
-        accountid,
+        accountName: accountname,
+        accountId: accountid,
       })
     );
 
@@ -159,9 +159,6 @@ export default function OnboardingPageOne() {
 
         {/* Navigation buttons */}
         <div className="button-container">
-          <button className="cancel-button" onClick={handleCancel}>
-            Cancel
-          </button>
           <div className="action-buttons">
             <button className="next-button" onClick={handleNext}>
               Next - Add Customer Managed Policies

@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { loginSuccess } from "../redux/actions/authActions";
+import { loginSuccess } from "../../REDUX/actions/authActions";
 import { useNavigate } from "react-router-dom";
-import "../Styles/LoginPage.css"; // Import the enhanced CSS for login page
+import logo from "../../assets/Images/cloudkeeper.png"; // Update the path to your logo
+import "../../Pages/LoginPage/LoginPage.css"; // Import the enhanced CSS for login page
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
@@ -32,9 +33,9 @@ const LoginPage = () => {
       if (role === "ADMIN") {
         navigate("/dashboard/usermanagement");
       } else if (role === "READONLY") {
-        navigate("/dashboard/costexplorer");
+        navigate("/dashboard");
       } else if (role === "CUSTOMER") {
-        navigate("/dashboard/aws-services");
+        navigate("/dashboard");
       } else {
         setError("Unknown role.");
       }
@@ -47,12 +48,9 @@ const LoginPage = () => {
     <div className="login-container">
       <div className="login-card">
         <div className="Logo">
-          <img
-            src="/home/divyansh/BootCamp/Frontend/my-cloud-app/src/Pages/logo_2025-01-30T12_32_13 (copy).png"
-            alt="CloudKeeper Logo"
-          />
+          <img src={logo} alt="CloudKeeper Logo" />
         </div>
-        
+
         <form onSubmit={handleLogin}>
           <label htmlFor="">username</label>
           <input

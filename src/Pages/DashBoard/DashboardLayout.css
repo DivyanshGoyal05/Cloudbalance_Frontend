@@ -16,7 +16,7 @@
 
 .dashboard-content {
     flex: 1;
-    padding: 2rem;
+    padding: 0;
     overflow-y: auto;
     background-color: #f9fbfd;
     /* Light background */

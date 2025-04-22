@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../Styles/OnboardingPageThree.css";
+import "../OnBoarding/OnboardingPageThree.css";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios"; // Added axios import
@@ -219,13 +219,16 @@ function OnboardingPageThree() {
             </ol>
 
             <div className="form-footer">
-              <button className="cancel-btn" onClick={() => navigate("/")}>
+              <button
+                className="cancel-btn"
+                onClick={() => navigate("/dashboard/onboardingpageone")}
+              >
                 Cancel
               </button>
               <div className="previous-next-section">
                 <button
                   className="back-btn"
-                  onClick={() => navigate("/onboarding-page-two")}
+                  onClick={() => navigate("/dashboard/onboardingpagetwo")}
                 >
                   Back
                 </button>

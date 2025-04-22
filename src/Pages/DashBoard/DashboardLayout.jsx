@@ -2,10 +2,10 @@
 import React from "react";
 import { useSelector } from "react-redux"; // for accessing the role from Redux
 import { Outlet } from "react-router-dom"; // For displaying child routes
-import "../Styles/DashboardLayout.css"; // Import CSS
-import Header from "../Components/Header";
+import "../DashBoard/DashboardLayout.css"; // Import CSS
+import Header from "../../Components/Header/Header";
 // import { Sidebar } from "../Components/Sidebar"; aise kab likhte hai
-import Sidebar from "../Components/Sidebar";
+import Sidebar from "../../Components/Sidebar/Sidebar"; // Import Sidebar component
 const DashboardLayout = () => {
   const { role } = useSelector((state) => state.auth); // get the role of the logged-in user
 

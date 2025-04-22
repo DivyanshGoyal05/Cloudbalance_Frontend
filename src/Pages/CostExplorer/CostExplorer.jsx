@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEfsfect, useState } from "react";
 import FusionCharts from "fusioncharts";
 import Charts from "fusioncharts/fusioncharts.charts";
 // import axios from "../api/axiosConfig";
-import "../Styles/CostExplorer.css";
 
 Charts(FusionCharts); // Register chart types
 
@@ -20,25 +19,13 @@ const CostExplorer = () => {
   const fetchCostData = async () => {
     setLoading(true);
     try {
-      // Mock API response
-      const response = {
-        data: {
-          monthlyCost: [
-            { label: "Jan", value: "4000" },
-            { label: "Feb", value: "3000" },
-            { label: "Mar", value: "2500" },
-            { label: "Apr", value: "3200" },
-          ],
-          serviceWiseCost: [
-            { label: "EC2", value: "5000" },
-            { label: "S3", value: "2000" },
-            { label: "RDS", value: "1500" },
-            { label: "Lambda", value: "1800" },
-          ],
-        },
-      };
-      setCostData(response.data.monthlyCost);
-      setServiceData(response.data.serviceWiseCost);
+      const response = await fetch("http://localhost:8080/snowflake/accounts");
+      const data = await response.json();
+      console.log("Received data:", data);
+
+      // Assuming backend returns data in the expected shape
+      setCostData(data.monthlyCost);
+      setServiceData(data.serviceWiseCost);
     } catch (error) {
       console.error("Error fetching cost data:", error);
     }

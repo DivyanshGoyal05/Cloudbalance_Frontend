@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "../api/axiosConfig";
-import "./userManagement/EditUser.css";
+import axios from "../../API/axiosConfig";
+import "../UserManagement/EditUser.css";
 
 function EditUser() {
   const { id } = useParams();
@@ -23,7 +23,7 @@ function EditUser() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get(`${URL}/users/${id}`, {
+        const response = await axios.get(`${URL}/users/all`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },

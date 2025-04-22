@@ -1,8 +1,9 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../redux/actions/authActions";
+import { logout } from "../../REDUX/actions/authActions";
 import { useNavigate } from "react-router-dom";
-import "../Styles/Header.css";
+import logo from "/home/divyansh/BootCamp/Frontend/my-cloud-app/src/assets/Images/cloudkeeper.png"; // Update the path to your logo
+import "../Header/Header.css"; // Update the path to your CSS file
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -20,10 +21,7 @@ const Header = () => {
     <div className="header">
       <div className="header-left">
         {/* Logo - you'll add the actual image */}
-        <img
-          src="my-cloud-app/src/assets/Images/cloudkeeper.png"
-          alt="CloudKeeper"
-        />
+        <img src={logo} alt="Cloudkeeper Logo" />
 
         {/* Menu toggle button - you'll add the actual icon */}
         <button className="menu-toggle">{/* Menu icon will go here */}</button>

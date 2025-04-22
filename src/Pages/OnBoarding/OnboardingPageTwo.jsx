@@ -1,5 +1,5 @@
 import React from "react";
-import "../Styles/OnboardingPageTwo.css";
+import "../OnBoarding/OnboardingPageTwo.css";
 import { useNavigate } from "react-router-dom";
 
 function OnboardingPageTwo() {
@@ -221,7 +221,7 @@ function OnboardingPageTwo() {
                 Ck-tuner-Role
               </a>{" "}
               Page.
-              <img src="" alt="" />
+              {/* <img src="" alt="" /> */}
             </p>
           </div>
         </div>
@@ -236,7 +236,7 @@ function OnboardingPageTwo() {
                 click on Add permissions Attach Policy
               </a>{" "}
               Page.
-              <img src="" alt="" />
+              {/* <img src="" alt="" /> */}
             </p>
           </div>
         </div>
@@ -252,7 +252,7 @@ function OnboardingPageTwo() {
                 and
               </a>{" "}
               select them.
-              <img src="" alt="" />
+              {/* <img src="" alt="" /> */}
             </p>
           </div>
         </div>
@@ -268,7 +268,7 @@ function OnboardingPageTwo() {
               </a>
               .
             </p>
-            <img src="" alt="Add permissions step" />
+            {/* <img src="" alt="Add permissions step" /> */}
           </div>
         </div>
 
@@ -283,7 +283,7 @@ function OnboardingPageTwo() {
               </span>
               .
             </p>
-            <img src="" alt="" />
+            {/* <img src="" alt="" /> */}
           </div>
         </div>
 
@@ -332,7 +332,7 @@ function OnboardingPageTwo() {
                 Review Policy
               </a>{" "}
               Page.
-              <img src="" alt="" />
+              {/* <img src="" alt="" /> */}
             </p>
           </div>
         </div>
@@ -373,7 +373,10 @@ function OnboardingPageTwo() {
       >
         <button className="button">Cancel</button>
         <div>
-          <button className="button" onClick={() => navigate("/")}>
+          <button
+            className="button"
+            onClick={() => navigate("/dashboard/onboardingpageone")}
+          >
             Back - Create An IAM Role
           </button>
           <button

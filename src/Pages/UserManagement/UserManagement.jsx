@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "../api/axiosConfig";
-import "../Styles/UserManagement.css";
+import axios from "../../API/axiosConfig";
+import "./UserManagement.css";
 
 function UserManagement() {
   const [users, setUsers] = useState([]);
@@ -69,9 +69,7 @@ function UserManagement() {
                   .join(", ") || "None"}
               </td>
               <td>
-                <button
-                  onClick={() => navigate(`/dashboard/usermanagement/edituser`)}
-                >
+                <button onClick={() => navigate("/dashboard/edituser")}>
                   Edit
                 </button>
               </td>
