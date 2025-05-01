@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess } from "../../redux/actions/authActions";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/Images/cloudkeeper.png"; // Update the path to your logo
@@ -10,10 +10,17 @@ import { toast } from "react-toastify";
 const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
 
-  const dispatch = useDispatch(); // Initialize useDispatch hook
-  const navigate = useNavigate(); // Initialize useNavigate hook
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/dashboard");
+    }
+  });
+
+  const dispatch = useDispatch();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -27,7 +34,6 @@ const LoginPage = () => {
       const { role, token } = response.data; // Destructure the role from the response
       localStorage.setItem("authToken", token);
 
-      // Dispatch login action to Redux
       dispatch(loginSuccess({ username, role }));
 
       // Redirect based on role
@@ -70,8 +76,6 @@ const LoginPage = () => {
           />
           <button type="submit">Login</button>
         </form>
-
-        {error && <p>{error}</p>}
       </div>
     </div>
   );
