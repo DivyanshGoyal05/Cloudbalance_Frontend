@@ -1,4 +1,4 @@
-import React, { useEfsfect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import FusionCharts from "fusioncharts";
 import Charts from "fusioncharts/fusioncharts.charts";
 // import axios from "../api/axiosConfig";

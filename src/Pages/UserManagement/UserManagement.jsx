@@ -11,12 +11,12 @@ function UserManagement() {
 
   useEffect(() => {
     fetchUsers();
-    fetchAccounts();
+  
   }, []);
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get(`${URL}/users/all`, {
+      const response = await axios.get(`${URL}/users/getallusers`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
@@ -29,7 +29,7 @@ function UserManagement() {
 
   const fetchAccounts = async () => {
     try {
-      const response = await axios.get(`${URL}/cloudAccount/getall`, {
+      const response = await axios.get(`${URL}/cloudAccount/getallaccounts`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
@@ -42,9 +42,11 @@ function UserManagement() {
 
   return (
     <div className="user-management-container">
-      <button onClick={() => navigate("/dashboard/usermanagement/adduser")}>
-        + Add User
-      </button>
+      <div className="add-user-button">
+        <button onClick={() => navigate("/dashboard/usermanagement/adduser")}>
+          + Add User
+        </button>
+      </div>
 
       <table>
         <thead>
@@ -52,7 +54,7 @@ function UserManagement() {
             <th>Username</th>
             <th>Name</th>
             <th>Role</th>
-            <th>Assigned Accounts</th>
+            {/* <th>Assigned Accounts</th> */}
             <th>Action</th>
           </tr>
         </thead>
@@ -62,14 +64,16 @@ function UserManagement() {
               <td>{user.username}</td>
               <td>{user.name}</td>
               <td>{user.role}</td>
-              <td>
-                {accounts
+              {/* <td> */}
+              {/* {accounts
                   .filter((acc) => user.assignedAccounts?.includes(acc.id))
                   .map((a) => a.name)
                   .join(", ") || "None"}
-              </td>
+              </td> */}
               <td>
-                <button onClick={() => navigate("/dashboard/edituser")}>
+                <button
+                  onClick={() => navigate(`/dashboard/edituser/${user.id}`)}
+                >
                   Edit
                 </button>
               </td>

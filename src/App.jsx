@@ -1,8 +1,9 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
-import { store, persistor } from "./REDUX/store";
+import { store, persistor } from "./redux/store";
 import LoginPage from "./Pages/LoginPage/LoginPage";
 import UserManagement from "./Pages/UserManagement/UserManagement";
 import Onboarding from "./Pages/OnBoarding/OnboardingPageOne";
@@ -14,6 +15,7 @@ import OnboardingPageThree from "./Pages/OnBoarding/OnboardingPageThree";
 import OnboardingPageOne from "./Pages/OnBoarding/OnboardingPageOne";
 import AddUser from "./Pages/UserManagement/AddUser";
 import "./App.css";
+import "react-toastify/dist/ReactToastify.css";
 import EditUser from "./Pages/UserManagement/EditUser";
 
 function App() {
@@ -26,12 +28,13 @@ function App() {
             <Route path="/" element={<LoginPage />} />
 
             {/* Protected routes inside DashboardLayout */}
+
             <Route path="/dashboard" element={<DashboardLayout />}>
               <Route path="aws-services" element={<AWSServices />} />
               <Route path="cost-explorer" element={<CostExplorer />} />
               <Route path="usermanagement" element={<UserManagement />} />
               <Route path="usermanagement/adduser" element={<AddUser />} />
-              <Route path="edituser" element={<EditUser />} />
+              <Route path="edituser/:id" element={<EditUser />} />
               <Route path="onboarding" element={<Onboarding />} />
               <Route path="onboardingpageone" element={<OnboardingPageOne />} />
               <Route path="onboardingpagetwo" element={<OnboardingPageTwo />} />
@@ -41,6 +44,17 @@ function App() {
               />
             </Route>
           </Routes>
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            // hideProgressBar={false}
+            // newestOnTop={false}
+            // closeOnClick
+            // rtl={false}
+            // pauseOnFocusLoss
+            // draggable
+            // pauseOnHover
+          />
         </BrowserRouter>
       </PersistGate>
     </Provider>

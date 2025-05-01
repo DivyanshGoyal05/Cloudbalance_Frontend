@@ -16,10 +16,12 @@
     padding: 32px;
 }
 
+
+
 .form-wrapper {
-    max-width: 800px;
-    margin: 0 auto;
+    margin: 0;
 }
+
 
 .form-heading {
     margin-bottom: 24px;
@@ -97,7 +99,7 @@ li {
 
 .copyfield-wrapper {
     display: flex;
-    align-items: center;
+    align-items: le;
     background-color: #f5f6f8;
     border: 1px solid #dbdbdb;
     border-radius: 4px;
@@ -302,7 +304,7 @@ input[type="radio"]:checked::before {
 
 .checkbox-label {
     display: flex;
-    align-items: center;
+    align-items: left;
     cursor: pointer;
 }
 
@@ -325,8 +327,8 @@ input[type="checkbox"]:checked::before {
     width: 16px;
     height: 16px;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: left;
+    justify-content: left;
     position: absolute;
     top: 0;
     left: 0;

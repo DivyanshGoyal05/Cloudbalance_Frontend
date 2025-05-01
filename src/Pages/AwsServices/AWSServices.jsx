@@ -1,15 +1,66 @@
 import React, { useState, useEffect } from "react";
-import axios from "../../API/axiosConfig";
+import axios from "axios";
 import "../AwsServices/AWSServices.css"; // Import your CSS file for styling
 
-const AWSServices = ({ userRole, assignedAccounts }) => {
+const AWSServices = ({ userRole }) => {
   const [selectedAccountId, setSelectedAccountId] = useState("");
   const [activeTab, setActiveTab] = useState("EC2");
   const [awsData, setAwsData] = useState({ ec2: [], rds: [], asg: [] });
   const [loading, setLoading] = useState(false);
+  const [assignedAccounts, setAssignedAccounts] = useState([]);
+  const [accountsLoading, setAccountsLoading] = useState(true);
+  const [accountError, setAccountError] = useState(null);
 
-  //on the basis of role it should load accounts and if the role is customer
-  //it should load accounts linked with the customer only not all accounts should be displayed
+  // Helper function to get the auth header correctly
+  const getAuthHeader = () => {
+    const token = localStorage.getItem("authToken");
+    // Check if token already includes "Bearer " prefix
+    if (token && !token.startsWith("Bearer ")) {
+      return `Bearer ${token}`;
+    }
+    return token; // Return token as is if it already has the prefix
+  };
+
+  // Fetch accounts when component mounts
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      setAccountsLoading(true);
+      setAccountError(null);
+
+      try {
+        console.log("Fetching accounts from API...");
+        const authHeader = getAuthHeader();
+
+        if (!authHeader) {
+          throw new Error("Authentication token not found");
+        }
+
+        console.log("Using auth header:", authHeader);
+
+        const response = await axios.get(
+          "http://localhost:8080/cloudAccount/getallaccounts",
+          {
+            headers: {
+              Authorization: authHeader,
+            },
+          }
+        );
+
+        console.log("Accounts fetched successfully:", response.data);
+        setAssignedAccounts(response.data);
+      } catch (error) {
+        console.error("Error fetching accounts:", error);
+        console.error("Error details:", error.response || error.message);
+        setAccountError(
+          "Failed to load accounts. Please check your connection and try again."
+        );
+      } finally {
+        setAccountsLoading(false);
+      }
+    };
+
+    fetchAccounts();
+  }, []);
 
   const handleAccountChange = (e) => {
     setSelectedAccountId(e.target.value);
@@ -18,12 +69,23 @@ const AWSServices = ({ userRole, assignedAccounts }) => {
   const fetchAWSData = async (accountId) => {
     setLoading(true);
     try {
-      const response = await axios.get(`/api/aws-services/${accountId}`);
+      // setAwsData({});
+      console.log(`Fetching AWS data for account ID: ${accountId}`);
+      const response = await axios.get(
+        `http://localhost:8080/api/aws-services/${accountId}`,
+        {
+          headers: {
+            Authorization: getAuthHeader(),
+          },
+        }
+      );
+      console.log("API response:", response.data); // Log the response
       setAwsData(response.data);
     } catch (error) {
       console.error("Error fetching AWS data", error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -109,6 +171,9 @@ const AWSServices = ({ userRole, assignedAccounts }) => {
     </table>
   );
 
+  // Show all accounts without filtering
+  const filteredAccounts = assignedAccounts;
+
   return (
     <div className="aws-container">
       <h2 className="heading">AWS Services Dashboard</h2>
@@ -116,17 +181,23 @@ const AWSServices = ({ userRole, assignedAccounts }) => {
 
       <div className="account-selector">
         <label>Select AWS Account:</label>
-        <select value={selectedAccountId} onChange={handleAccountChange}>
-          <option value="">-- Choose Account --</option>
-          {(userRole === "ADMIN" || userRole === "READONLY"
-            ? assignedAccounts
-            : assignedAccounts.filter((acc) => acc.assignedToUser)
-          ).map((acc) => (
-            <option key={acc.accountId} value={acc.accountId}>
-              {acc.name} ({acc.accountId})
-            </option>
-          ))}
-        </select>
+        {accountsLoading ? (
+          <p>Loading accounts...</p>
+        ) : accountError ? (
+          <div className="error-message">
+            {accountError}
+            <button onClick={() => window.location.reload()}>Retry</button>
+          </div>
+        ) : (
+          <select value={selectedAccountId} onChange={handleAccountChange}>
+            <option value="">-- Choose Account --</option>
+            {filteredAccounts.map((acc) => (
+              <option key={acc.id} value={acc.accountId}>
+                {acc.name} ({acc.accountId})
+              </option>
+            ))}
+          </select>
+        )}
       </div>
 
       {selectedAccountId && (

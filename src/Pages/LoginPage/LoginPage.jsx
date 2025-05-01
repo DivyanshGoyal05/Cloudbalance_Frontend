@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { loginSuccess } from "../../REDUX/actions/authActions";
+import { loginSuccess } from "../../redux/actions/authActions";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/Images/cloudkeeper.png"; // Update the path to your logo
 import "../../Pages/LoginPage/LoginPage.css"; // Import the enhanced CSS for login page
+import { toast } from "react-toastify";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
@@ -40,7 +41,8 @@ const LoginPage = () => {
         setError("Unknown role.");
       }
     } catch (err) {
-      setError("Invalid username or password.", err);
+      toast.error(err?.response?.data || "Login failed. Please try again.");
+      // setError("Invalid username or password.", err);
     }
   };
 

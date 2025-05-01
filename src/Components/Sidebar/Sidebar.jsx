@@ -1,10 +1,11 @@
 import React from "react";
-import { NavLink } from "react-router-dom"; // Change from Link to NavLink
-import "../../Components/Sidebar/sidebar.css"; // Import CSS for styling
+import { NavLink } from "react-router-dom"; 
+import "../../Components/Sidebar/sidebar.css"; 
 
 const Sidebar = ({ role }) => {
   return (
     <div className="sidebar">
+      
       {role === "ADMIN" && (
         <>
           <NavLink to="/dashboard/usermanagement">User Management</NavLink>

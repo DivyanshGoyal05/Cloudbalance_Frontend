@@ -383,7 +383,7 @@ function OnboardingPageTwo() {
             className="button primary"
             onClick={() => navigate("/dashboard/onboardingpagethree")}
           >
-            Next - Create S3
+            Cost & Usage
           </button>
         </div>
       </div>

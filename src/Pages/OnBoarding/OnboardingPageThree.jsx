@@ -1,72 +1,84 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../OnBoarding/OnboardingPageThree.css";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import axios from "axios"; // Added axios import
+import { toast } from "react-toastify";
+import axios from "axios";
+import {
+  completeOnboarding,
+  clearOnboardingData,
+} from "../../redux/actions/onboardingActions";
 
 function OnboardingPageThree() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  // Getting the state from Redux
   const onboardingData = useSelector((state) => state.onboarding);
 
-  const reportName = "ck-tuner-275595855473-hourly-cur";
-  const reportPrefix = "275595855473";
-  // Simple URL without using environment variables
-  const URL = "http://localhost:8080"; // Replace with your actual API URL
+  const reportName = "cur-report";
+  const reportPrefix = "cur-report";
 
+  // Function to copy text to clipboard
   const copyToClipboard = (text) => {
     navigator.clipboard
       .writeText(text)
-      .then(() => {
-        alert(`${text} copied to clipboard!`);
-      })
+      .then(() => toast.info("Copied to clipboard!"))
       .catch((err) => {
-        console.error("Failed to copy: ", err);
-        alert("Failed to copy text.");
+        console.error("Copy failed:", err);
+        toast.error("Failed to copy text.");
       });
   };
 
+  // Check if onboarding data is available
+  useEffect(() => {
+    if (!onboardingData.roleARN || !onboardingData.accountId) {
+      setSubmitError("Missing required onboarding data. Please start over.");
+    }
+  }, [onboardingData]);
+
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitError("");
 
     try {
-      // Get auth token directly from localStorage
       const authToken = localStorage.getItem("authToken");
+      if (!authToken) {
+        throw new Error("Authentication token missing");
+      }
 
-      // Prepare data from Redux store
-      const dataToSubmit = {
-        cloudAccountId: onboardingData.accountid,
-        cloudAccountName: onboardingData.accountname,
-        roleARN: onboardingData.roleARN,
-        roleName: onboardingData.roleName,
-        reportName: reportName,
-        reportPrefix: reportPrefix,
+      const payload = {
+        accountId: onboardingData.accountId,
+        accountName: onboardingData.accountName || "",
+        roleArn: onboardingData.roleARN,
       };
 
-      // Make the API call directly with the URL
       const response = await axios.post(
-        `${URL}/cloudAccount/create`,
-        dataToSubmit,
+        "http://localhost:8080/cloudAccount/create",
+        payload,
         {
           headers: {
             Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
           },
         }
       );
 
-      // Dispatch action to mark onboarding as complete
-      dispatch({ type: "COMPLETE_ONBOARDING", payload: response.data });
-
-      alert("Onboarding completed successfully!");
-      navigate("/dashboard");
+      dispatch(completeOnboarding(response.data));
+      dispatch(clearOnboardingData());
+      toast.success("🎉 Onboarding successful! Redirecting...");
+      setTimeout(() => {
+        navigate("/dashboard/onboardingpageone");
+      }, 1500);
     } catch (error) {
-      console.error("Error submitting form:", error);
-      alert(
-        "There was an error submitting your information. Please try again."
+      console.error("Submission error:", error);
+      toast.error(error?.response?.data || error.message);
+      setSubmitError(
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to complete onboarding. Please try again."
       );
     } finally {
       setIsSubmitting(false);
@@ -100,8 +112,8 @@ function OnboardingPageThree() {
                   >
                     Cost and Usage Reports
                   </a>{" "}
-                  in the Billing Dashboard and click on{" "}
-                  <span className="bold-text">Create report</span>.
+                  in the Billing Dashboard and click{" "}
+                  <span className="bold-text">Create report</span>
                 </div>
               </li>
 
@@ -110,14 +122,14 @@ function OnboardingPageThree() {
                   <span className="steps">2</span>
                 </span>
                 <div className="content">
-                  Name the report as shown below and select the{" "}
+                  Name the report as shown below and select{" "}
                   <span className="bold-text">Include resource IDs</span>{" "}
                   checkbox:
                   <div
                     className="copyfield-wrapper"
                     onClick={() => copyToClipboard(reportName)}
                   >
-                    <pre id="report-name">{reportName}</pre>
+                    <pre>{reportName}</pre>
                     <button
                       className="copy-btn"
                       onClick={(e) => {
@@ -125,30 +137,9 @@ function OnboardingPageThree() {
                         copyToClipboard(reportName);
                       }}
                     >
-                      <svg
-                        className="copy-icon"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
-                        <rect
-                          x="8"
-                          y="2"
-                          width="8"
-                          height="4"
-                          rx="1"
-                          ry="1"
-                        ></rect>
-                      </svg>
+                      📋
                     </button>
                   </div>
-                  <p className="no-message">
-                    Click anywhere in box to copy the content inside.
-                  </p>
                 </div>
               </li>
 
@@ -167,13 +158,12 @@ function OnboardingPageThree() {
                   <span className="steps">4</span>
                 </span>
                 <div className="content">
-                  In the Delivery options section, enter the below-mentioned
-                  Report path prefix
+                  In Delivery options, enter the following Report path prefix:
                   <div
                     className="copyfield-wrapper"
                     onClick={() => copyToClipboard(reportPrefix)}
                   >
-                    <pre id="report-prefix">{reportPrefix}</pre>
+                    <pre>{reportPrefix}</pre>
                     <button
                       className="copy-btn"
                       onClick={(e) => {
@@ -181,25 +171,7 @@ function OnboardingPageThree() {
                         copyToClipboard(reportPrefix);
                       }}
                     >
-                      <svg
-                        className="copy-icon"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
-                        <rect
-                          x="8"
-                          y="2"
-                          width="8"
-                          height="4"
-                          rx="1"
-                          ry="1"
-                        ></rect>
-                      </svg>
+                      📋
                     </button>
                   </div>
                 </div>
@@ -210,36 +182,38 @@ function OnboardingPageThree() {
                   <span className="steps">5</span>
                 </span>
                 <div className="content">
-                  Click on <span className="bold-text">Next</span>. Now, review
-                  the configuration of the Cost and Usage Report. Once
-                  satisfied, click on{" "}
-                  <span className="bold-text">Create Report</span>.
+                  Click <span className="bold-text">Next</span>, review, and
+                  then click <span className="bold-text">Create Report</span>.
                 </div>
               </li>
             </ol>
+          </div>
 
-            <div className="form-footer">
+          <div className="form-footer">
+            {submitError && <div className="error-message">{submitError}</div>}
+
+            <button
+              className="cancel-btn"
+              onClick={() => navigate("/dashboard")}
+            >
+              Cancel
+            </button>
+
+            <div className="previous-next-section">
               <button
-                className="cancel-btn"
-                onClick={() => navigate("/dashboard/onboardingpageone")}
+                className="back-btn"
+                onClick={() => navigate("/dashboard/onboardingpagetwo")}
               >
-                Cancel
+                Back
               </button>
-              <div className="previous-next-section">
-                <button
-                  className="back-btn"
-                  onClick={() => navigate("/dashboard/onboardingpagetwo")}
-                >
-                  Back
-                </button>
-                <button
-                  className="next-btn"
-                  disabled={isSubmitting}
-                  onClick={handleSubmit}
-                >
-                  {isSubmitting ? "Submitting..." : "Submit"}
-                </button>
-              </div>
+
+              <button
+                className="next-btn"
+                disabled={isSubmitting}
+                onClick={handleSubmit}
+              >
+                {isSubmitting ? "Submitting..." : "Submit"}
+              </button>
             </div>
           </div>
         </div>
