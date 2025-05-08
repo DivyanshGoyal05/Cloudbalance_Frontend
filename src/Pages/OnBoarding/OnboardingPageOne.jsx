@@ -89,19 +89,14 @@ export default function OnboardingPageOne() {
     });
   };
 
+
+
+
 // const [formData , setFormData] = useState({
 //   roleARN: "",  
 //   accountName: "",
 //   accountId: "",
 // });
-
-// handleChange = (e) =>{
-//   const { name, value } = e.target;
-//   setFormData((prev) => ({
-//     ...prev,
-//     [name]: value,
-//   }));
-// }
 
   return (
     <div className="onboarding-container">

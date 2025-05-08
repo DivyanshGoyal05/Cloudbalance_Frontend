@@ -4,22 +4,13 @@ import "../AwsServices/AWSServices.css"; // Import your CSS file for styling
 
 const AWSServices = ({ userRole }) => {
   const [selectedAccountId, setSelectedAccountId] = useState("");
-  const [activeTab, setActiveTab] = useState("EC2");
+  const [activeTab, setActiveTab] = useState("RDS");
   const [awsData, setAwsData] = useState({ ec2: [], rds: [], asg: [] });
   const [loading, setLoading] = useState(false);
   const [assignedAccounts, setAssignedAccounts] = useState([]);
   const [accountsLoading, setAccountsLoading] = useState(true);
   const [accountError, setAccountError] = useState(null);
 
-  // Helper function to get the auth header correctly
-  const getAuthHeader = () => {
-    const token = localStorage.getItem("authToken");
-    // Check if token already includes "Bearer " prefix
-    if (token && !token.startsWith("Bearer ")) {
-      return `Bearer ${token}`;
-    }
-    return token; // Return token as is if it already has the prefix
-  };
 
   // Fetch accounts when component mounts
   useEffect(() => {
@@ -28,29 +19,17 @@ const AWSServices = ({ userRole }) => {
       setAccountError(null);
 
       try {
-        console.log("Fetching accounts from API...");
-        const authHeader = getAuthHeader();
-
-        if (!authHeader) {
-          throw new Error("Authentication token not found");
-        }
-
-        console.log("Using auth header:", authHeader);
-
         const response = await axios.get(
           "http://localhost:8080/cloudAccount/getallaccounts",
           {
             headers: {
-              Authorization: authHeader,
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
             },
           }
         );
-
-        console.log("Accounts fetched successfully:", response.data);
         setAssignedAccounts(response.data);
       } catch (error) {
         console.error("Error fetching accounts:", error);
-        console.error("Error details:", error.response || error.message);
         setAccountError(
           "Failed to load accounts. Please check your connection and try again."
         );
@@ -66,20 +45,20 @@ const AWSServices = ({ userRole }) => {
     setSelectedAccountId(e.target.value);
   };
 
+
   const fetchAWSData = async (accountId) => {
     setLoading(true);
     try {
-      // setAwsData({});
       console.log(`Fetching AWS data for account ID: ${accountId}`);
       const response = await axios.get(
         `http://localhost:8080/api/aws-services/${accountId}`,
         {
           headers: {
-            Authorization: getAuthHeader(),
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
-      console.log("API response:", response.data); // Log the response
+      console.log("API response:", response.data);
       setAwsData(response.data);
     } catch (error) {
       console.error("Error fetching AWS data", error);
@@ -176,9 +155,6 @@ const AWSServices = ({ userRole }) => {
 
   return (
     <div className="aws-container">
-      <h2 className="heading">AWS Services Dashboard</h2>
-      <p className="subheading">Monitor AWS resources by account</p>
-
       <div className="account-selector">
         <label>Select AWS Account:</label>
         {accountsLoading ? (

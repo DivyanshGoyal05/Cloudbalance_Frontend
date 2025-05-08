@@ -43,7 +43,7 @@
     background-color: #003366;
     padding: 1rem;
     color: white;
-    text-align: center;
+    text-align: flex-start;
     font-size: 24px;
 }
 

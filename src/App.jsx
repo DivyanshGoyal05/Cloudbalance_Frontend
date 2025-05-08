@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
@@ -24,11 +24,9 @@ function App() {
       <PersistGate loading={null} persistor={persistor}>
         <BrowserRouter>
           <Routes>
-            {/* Public route for login */}
-            <Route path="/" element={<LoginPage />} />
+            <Route path="/login" element={<LoginPage />} />
 
-            {/* Protected routes inside DashboardLayout */}
-
+            <Route path="/" element={<Navigate to="/login" />} />
             <Route path="/dashboard" element={<DashboardLayout />}>
               <Route path="aws-services" element={<AWSServices />} />
               <Route path="cost-explorer" element={<CostExplorer />} />

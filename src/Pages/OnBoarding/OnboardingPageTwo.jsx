@@ -315,9 +315,7 @@ function OnboardingPageTwo() {
                 📋
               </button>
 
-              <p className="note">
-                Click anywhere to box to copy the content inside.
-              </p>
+              <p className="note">Click to box to copy the content inside.</p>
             </div>
           </div>
         </div>

@@ -5,7 +5,7 @@ import authReducer from './reducers/authReducer';
 import userReducer from './reducers/userReducer';
 import onboardingReducer from './reducers/onboardingReducer';
 
-// Persist config (only auth and onboarding)
+
 const persistConfig = {
     key: 'root',
     storage,

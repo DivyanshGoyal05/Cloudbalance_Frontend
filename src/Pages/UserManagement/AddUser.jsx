@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../UserManagement/addUser.css"; // Import your CSS file for styling
+import { toast } from "react-toastify";
 
 function AddUser() {
   const navigate = useNavigate();
@@ -80,16 +81,6 @@ function AddUser() {
     });
   };
 
-  // Select all accounts
-  const selectAllAccounts = () => {
-    setUser({
-      ...user,
-      assignedAccounts: [
-        ...new Set([...user.assignedAccounts, ...filteredAccounts]),
-      ],
-    });
-  };
-
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -101,14 +92,16 @@ function AddUser() {
     };
 
     try {
-      await axios.post(`${URL}/users/create`, userToSubmit, {
+      const response = await axios.post(`${URL}/users/create`, userToSubmit, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
       });
-      navigate("/users");
+      navigate("/dashboard/usermanagement");
+      toast.success("User added successfully!", response?.data);
     } catch (error) {
       console.error("Error adding user:", error);
+      toast.error("Failed to add user. Please try again.");
     }
   };
 
@@ -190,14 +183,6 @@ function AddUser() {
                       className="search-input"
                     />
                   </div>
-                  <div className="checkbox-item select-all">
-                    <input
-                      type="checkbox"
-                      id="select-all"
-                      onChange={selectAllAccounts}
-                    />
-                    <label htmlFor="select-all">Select All</label>
-                  </div>
                   <div className="accounts-list">
                     {filteredAccounts.map((account) => (
                       <div key={account.id} className="checkbox-item">
@@ -215,42 +200,6 @@ function AddUser() {
                       </div>
                     ))}
                   </div>
-                </div>
-
-                <div className="transfer-buttons">
-                  <button
-                    type="button"
-                    className="transfer-btn"
-                    onClick={() => {
-                      const selectedAccounts = filteredAccounts.filter(
-                        (acc) =>
-                          !user.assignedAccounts.some((a) => a.id === acc.id)
-                      );
-                      if (selectedAccounts.length > 0) {
-                        setUser({
-                          ...user,
-                          assignedAccounts: [
-                            ...user.assignedAccounts,
-                            ...selectedAccounts,
-                          ],
-                        });
-                      }
-                    }}
-                  >
-                    &gt;
-                  </button>
-                  <button
-                    type="button"
-                    className="transfer-btn"
-                    onClick={() => {
-                      setUser({
-                        ...user,
-                        assignedAccounts: [],
-                      });
-                    }}
-                  >
-                    &lt;
-                  </button>
                 </div>
 
                 <div className="account-column">

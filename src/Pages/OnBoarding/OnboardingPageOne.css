@@ -42,8 +42,8 @@
     width: 24px;
     height: 24px;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-start;
+    justify-content: flex-start;
     margin-right: 12px;
     flex-shrink: 0;
     font-size: 14px;
@@ -112,8 +112,8 @@
     padding: 8px;
     border-right: 1px solid #ddd;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-start;
+    justify-content: flex-start;
     font-size: 12px;
 }
 

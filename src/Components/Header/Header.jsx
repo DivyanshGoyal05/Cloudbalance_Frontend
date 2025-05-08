@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import logo from "/home/divyansh/BootCamp/Frontend/my-cloud-app/src/assets/Images/cloudkeeper.png";
 import "../Header/Header.css";
 import { FaBars, FaQuestionCircle, FaUserCircle } from "react-icons/fa";
+import api from "../../API/axiosConfig";
+import { toast } from "react-toastify";
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -12,15 +14,16 @@ const Header = () => {
 
   const { username, isLoggedIn } = useSelector((state) => state.auth);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     dispatch(logout());
+    await api.post("/api/logout");
     localStorage.clear();
-    navigate("/");
+    navigate("/login");
+    toast.success("Logout successful");
   };
 
   return (
     <div className="header">
-      
       <div className="header-left">
         <img src={logo} alt="Cloudkeeper Logo" />
 

@@ -3,10 +3,10 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess } from "../../redux/actions/authActions";
 import { useNavigate } from "react-router-dom";
-import logo from "../../assets/Images/cloudkeeper.png"; // Update the path to your logo
-import "../../Pages/LoginPage/LoginPage.css"; // Import the enhanced CSS for login page
+import logo from "../../assets/Images/cloudkeeper.png";
+import "../../Pages/LoginPage/LoginPage.css";
 import { toast } from "react-toastify";
-
+// const usernmae = "paras";
 const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -24,6 +24,7 @@ const LoginPage = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    // debugger;
     try {
       // Make the API call
       const response = await axios.post("http://localhost:8080/api/login", {
@@ -31,24 +32,15 @@ const LoginPage = () => {
         password,
       });
 
-      const { role, token } = response.data; // Destructure the role from the response
+      const { role, token } = response.data;
       localStorage.setItem("authToken", token);
 
       dispatch(loginSuccess({ username, role }));
 
-      // Redirect based on role
-      if (role === "ADMIN") {
-        navigate("/dashboard/usermanagement");
-      } else if (role === "READONLY") {
-        navigate("/dashboard");
-      } else if (role === "CUSTOMER") {
-        navigate("/dashboard");
-      } else {
-        setError("Unknown role.");
-      }
+      navigate("/dashboard");
     } catch (err) {
+      console.error("Login error:", err);
       toast.error(err?.response?.data || "Login failed. Please try again.");
-      // setError("Invalid username or password.", err);
     }
   };
 
