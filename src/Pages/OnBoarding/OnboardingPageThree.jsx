@@ -19,7 +19,6 @@ function OnboardingPageThree() {
   const reportName = "cur-report";
   const reportPrefix = "cur-report";
 
-  // Function to copy text to clipboard
   const copyToClipboard = (text) => {
     navigator.clipboard
       .writeText(text)
@@ -30,14 +29,12 @@ function OnboardingPageThree() {
       });
   };
 
-  // Check if onboarding data is available
   useEffect(() => {
     if (!onboardingData.roleARN || !onboardingData.accountId) {
       setSubmitError("Missing required onboarding data. Please start over.");
     }
   }, [onboardingData]);
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);

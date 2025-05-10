@@ -5,12 +5,9 @@ import { useNavigate } from "react-router-dom";
 function OnboardingPageTwo() {
   const navigate = useNavigate();
 
-  // Simple function to copy text when buttons are clicked
   function copyText(text) {
-    // This copies the text to clipboard
     navigator.clipboard.writeText(text);
 
-    // Show an alert to let the user know it worked
     alert("Copied to clipboard!");
   }
 

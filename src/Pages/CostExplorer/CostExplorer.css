@@ -1,4 +1,4 @@
-.cost-explorer-container {
+.cost-explorer {
     padding: 2rem;
     background-color: #f8fafc;
     min-height: 100vh;
@@ -6,34 +6,83 @@
     font-family: 'Segoe UI', sans-serif;
 }
 
-.title {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #1d4ed8;
+.cost-explorer section {
+    margin-bottom: 1.5rem;
 }
 
-.subtitle {
+.cost-explorer label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.cost-explorer select {
+    padding: 0.5rem;
     font-size: 1rem;
-    color: #64748b;
-    margin-bottom: 2rem;
+    width: 100%;
+    max-width: 300px;
 }
 
-.chart-box {
-    background-color: white;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+.error-message {
+    color: red;
+    font-weight: bold;
 }
 
-.loading {
-    font-size: 1.2rem;
-    color: #3b82f6;
+.error-message button {
+    margin-top: 0.5rem;
+    padding: 0.3rem 0.6rem;
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
-.date-picker {
+.costExplorerContent {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    margin-bottom: 2rem;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.main-content {
+    flex: 1 1 65%;
+}
+
+.filterSidebar {
+    flex: 1 1 30%;
+    max-width: 300px;
+    background-color: #ffffff;
+
+}
+
+.sidebar h3 {
+    margin-bottom: 1rem;
+    color: #1e40af;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar li {
+    margin-bottom: 1.25rem;
+}
+
+.sidebar li>div:first-child {
+    cursor: pointer;
+    font-weight: bold;
+    color: #1e3a8a;
+}
+
+.sidebar .checkbox-group {
+    margin-top: 0.5rem;
+    padding-left: 1rem;
+}
+
+.sidebar .checkbox-group label {
+    margin-left: 0.25rem;
+    font-size: 0.95rem;
+    color: #334155;
 }

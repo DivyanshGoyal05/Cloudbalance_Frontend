@@ -8,23 +8,17 @@ export default function OnboardingPageOne() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // Fetch state from Redux
   const { roleARN, accountName, accountId } = useSelector(
     (state) => state.onboarding
   );
+  
 
-  // Local state for form data
   const [formData, setFormData] = useState({
     roleARN: roleARN || "",
     accountName: accountName || "",
     accountId: accountId || "",
   });
 
-  const [errors, setErrors] = useState({
-    roleARN: "",
-  });
-
-  // Sync Redux values only once on mount
   useEffect(() => {
     setFormData({
       roleARN: roleARN || "",
@@ -33,43 +27,21 @@ export default function OnboardingPageOne() {
     });
   }, []);
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
+    
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
-
-    if (name === "roleARN" && value.trim()) {
-      setErrors((prev) => ({ ...prev, roleARN: "" }));
-    }
   };
 
-  // Validate required fields
-  const validateForm = () => {
-    let valid = true;
-    const newErrors = { ...errors };
-
-    if (!formData.roleARN.trim()) {
-      newErrors.roleARN = "IAM Role ARN is required";
-      valid = false;
-    }
-
-    setErrors(newErrors);
-    return valid;
-  };
-
-  // Submit and go to next page
   const handleNext = (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
-
     dispatch(saveIamRoleInfo(formData));
     navigate("/dashboard/onboardingpagetwo");
   };
 
-  // Policy to copy
   const trustPolicyJson = `{
   "Version": "2012-10-17",
   "Statement": [
@@ -88,15 +60,6 @@ export default function OnboardingPageOne() {
       alert("Policy copied to clipboard!");
     });
   };
-
-
-
-
-// const [formData , setFormData] = useState({
-//   roleARN: "",  
-//   accountName: "",
-//   accountId: "",
-// });
 
   return (
     <div className="onboarding-container">
@@ -151,12 +114,8 @@ export default function OnboardingPageOne() {
                 placeholder="Enter the IAM Role ARN"
                 value={formData.roleARN}
                 onChange={handleChange}
-                className={`arn-input ${errors.roleARN ? "error" : ""}`}
-                required
+                className="arn-input"
               />
-              {errors.roleARN && (
-                <div className="error-message">{errors.roleARN}</div>
-              )}
             </div>
 
             <label className="input-label">Enter Cloud Account ID</label>

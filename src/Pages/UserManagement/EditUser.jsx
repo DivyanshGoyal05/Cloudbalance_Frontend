@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-// import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "../../API/axiosConfig";
 import "../UserManagement/EditUser.css";
@@ -20,6 +19,7 @@ function EditUser() {
   const [allAccounts, setAllAccounts] = useState([]);
   const [filteredAccounts, setFilteredAccounts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [assignedAccountIds, setAssignedAccountIds] = useState([]);
 
   useEffect(() => {
     const fetchAccounts = async () => {
@@ -38,7 +38,30 @@ function EditUser() {
     fetchAccounts();
   }, []);
 
-  // Handle search functionality
+  useEffect(() => {
+    const fetchAssignedAccounts = async () => {
+      try {
+        const response = await axios.get(
+          `${URL}/users/getassociatedcloudaccounts/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+          }
+        );
+        // Handle the response here
+        setAssignedAccountIds(response.data);
+        setUser((prev) => ({
+          ...prev,
+          assignedAccounts: response.data,
+        }));
+      } catch (error) {
+        console.error("Error fetching assigned accounts:", error);
+      }
+    };
+    fetchAssignedAccounts();
+  }, [id]);
+
   useEffect(() => {
     if (searchTerm.trim() === "") {
       setFilteredAccounts(allAccounts);
@@ -85,15 +108,13 @@ function EditUser() {
         },
       });
 
-      // Refresh the users list in Redux
-      const response = await axios.get(`${URL}/users/getallusers`, {
+      await axios.get(`${URL}/users/getallusers`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
       });
-      // dispatch({ type: "SET_USERS", payload: response.data });
 
-      navigate("/dashboard/usermanagement"); // Go back to user list
+      navigate("/dashboard/usermanagement");
     } catch (error) {
       console.error("Error updating user:", error);
     }
@@ -101,7 +122,7 @@ function EditUser() {
 
   return (
     <div className="form-container">
-      <h2>Edit User </h2>
+      <h2>Edit User</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Username:</label>
@@ -110,7 +131,6 @@ function EditUser() {
             name="username"
             value={user.username}
             onChange={handleInputChange}
-            // readOnly // Use readOnly instead of disabled if you want it to be included in form submission
             className="form-input"
           />
         </div>
@@ -138,8 +158,6 @@ function EditUser() {
             placeholder="Enter new password if changing"
           />
         </div>
-
-        <div className="associated-account-id"></div>
 
         <div className="form-group">
           <label>Role:</label>
@@ -191,6 +209,19 @@ function EditUser() {
             </div>
           </div>
         )}
+
+        <div className="form-group">
+          <label>Already Assigned Accounts:</label>
+          {assignedAccountIds.length === 0 ? (
+            <p>No accounts assigned.</p>
+          ) : (
+            <select className="form-input" multiple disabled>
+              {assignedAccountIds.map((accountId) => (
+                <option key={accountId}>{accountId}</option>
+              ))}
+            </select>
+          )}
+        </div>
 
         <div className="form-actions">
           <button type="submit" className="submit-btn">

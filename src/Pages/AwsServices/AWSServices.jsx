@@ -12,7 +12,7 @@ const AWSServices = ({ userRole }) => {
   const [accountError, setAccountError] = useState(null);
 
 
-  // Fetch accounts when component mounts
+
   useEffect(() => {
     const fetchAccounts = async () => {
       setAccountsLoading(true);

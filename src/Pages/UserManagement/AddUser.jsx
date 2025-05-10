@@ -21,7 +21,6 @@ function AddUser() {
   const [filteredAccounts, setFilteredAccounts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Fetch available accounts when component loads
   useEffect(() => {
     const fetchAccounts = async () => {
       try {
@@ -39,7 +38,6 @@ function AddUser() {
     fetchAccounts();
   }, []);
 
-  // Handle search functionality
   useEffect(() => {
     if (searchTerm.trim() === "") {
       setFilteredAccounts(allAccounts);
@@ -61,7 +59,6 @@ function AddUser() {
     setSearchTerm(e.target.value);
   };
 
-  // Add account to user's assigned accounts
   const addAccount = (account) => {
     if (!user.assignedAccounts.some((acc) => acc.id === account.id)) {
       setUser({
@@ -71,7 +68,6 @@ function AddUser() {
     }
   };
 
-  // Remove account from user's assigned accounts
   const removeAccount = (account) => {
     setUser({
       ...user,
@@ -81,11 +77,9 @@ function AddUser() {
     });
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Extract just the IDs for submission
     const userToSubmit = {
       ...user,
       assignedAccounts: user.assignedAccounts.map((account) => account.id),

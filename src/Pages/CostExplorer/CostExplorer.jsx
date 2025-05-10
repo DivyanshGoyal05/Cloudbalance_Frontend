@@ -1,19 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import FilterSidebar from "./FilterSidebar";
+import "./CostExplorer.css";
 
 // MUI
-import OutlinedInput from "@mui/material/OutlinedInput";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import ListItemText from "@mui/material/ListItemText";
-import Select from "@mui/material/Select";
-import Checkbox from "@mui/material/Checkbox";
+import Box from "@mui/material/Box";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import Box from "@mui/material/Box";
 
 // FusionCharts
 import ReactFC from "react-fusioncharts";
@@ -23,47 +18,63 @@ import FusionTheme from "fusioncharts/themes/fusioncharts.theme.fusion";
 ReactFC.fcRoot(FusionCharts, Column2D, FusionTheme);
 
 const CostExplorer = () => {
-  const [selectedAccountId, setSelectedAccountId] = useState("");
+  // Fixed account ID
+
+
   const [accountsLoading, setAccountsLoading] = useState(true);
   const [accountError, setAccountError] = useState(null);
   const [assignedAccounts, setAssignedAccounts] = useState([]);
   const [date, setDate] = useState(new Date());
-  const [personName, setPersonName] = useState([]);
+  const [columnName, setColumnName] = useState([]);
+  const [innerColumnName, setInnerColumnName] = useState([]);
+  const [names, setNames] = useState([]);
+  const [activeTabIndex, setActiveTabIndex] = useState(0);
 
   const [columns, setColumns] = useState([]);
+  const [filterOptions, setFilterOptions] = useState({});
+  const [selectedFilters, setSelectedFilters] = useState({});
+  const [loadingChart, setLoadingChart] = useState(false);
 
-  const ITEM_HEIGHT = 48;
-  const ITEM_PADDING_TOP = 8;
-  const MenuProps = {
-    PaperProps: {
-      style: {
-        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-        width: 250,
-      },
+
+
+  // Fetch data when dependencies change
+  useEffect(() => {
+    getCostExplorerData();
+  }, [getCostExplorerData]);
+
+  const handleTabChange = (event, newValue) => {
+    setActiveTabIndex(newValue);
+  };
+
+  const handleColumnClick = useCallback(
+    async (colName) => {
+      if (filterOptions[colName]) {
+        setFilterOptions((prev) => {
+          const updated = { ...prev };
+          delete updated[colName];
+          return updated;
+        });
+        return;
+      }
+
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/snowflake/filtercolumn/${colName}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+          }
+        );
+        setFilterOptions((prev) => ({ ...prev, [colName]: response.data }));
+      } catch (error) {
+        console.error(`Error getting filter values:`, error);
+      }
     },
-  };
+    [filterOptions]
+  );
 
-  // const names = [
-  //   "Oliver Hansen",
-  //   "Van Henry",
-  //   "April Tucker",
-  //   "Ralph Hubbard",
-  //   "Omar Alexander",
-  //   "Carlos Abbott",
-  //   "Miriam Wagner",
-  //   "Bradley Wilkerson",
-  //   "Virginia Andrews",
-  //   "Kelly Snyder",
-  // ];
-
-  const [names, setNames] = useState([]);
-
-  const [value, setValue] = React.useState(0);
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
+  // Fetch accounts on mount
   useEffect(() => {
     const fetchAccounts = async () => {
       setAccountsLoading(true);
@@ -79,7 +90,7 @@ const CostExplorer = () => {
         );
         setAssignedAccounts(response.data);
       } catch (error) {
-        console.error("Error fetching accounts:", error);
+        console.error("Error getting accounts:", error);
         setAccountError(
           "Failed to load accounts. Please check your connection and try again."
         );
@@ -87,12 +98,10 @@ const CostExplorer = () => {
         setAccountsLoading(false);
       }
     };
-
     fetchAccounts();
   }, []);
 
-  // Fetch columns data
-
+  // Fetch columns on mount
   useEffect(() => {
     const fetchColumns = async () => {
       try {
@@ -107,55 +116,42 @@ const CostExplorer = () => {
         setColumns(response.data);
         setNames(response.data);
       } catch (error) {
-        console.error("Error fetching columns:", error);
+        console.error("Error getting columns:", error);
       }
     };
-
     fetchColumns();
   }, []);
 
-  const handleAccountChange = (e) => {
-    setSelectedAccountId(e.target.value);
-  };
-
-  const handleTagChange = (event) => {
-    const { value } = event.target;
-    setPersonName(typeof value === "string" ? value.split(",") : value);
-  };
-
-
-
-const handleFilterChange = ()=>{
-
-}
-
-
-
-
-  const chartData = [
-    { label: "Venezuela", value: "290" },
-    { label: "Saudi", value: "260" },
-    { label: "Canada", value: "180" },
-    { label: "Iran", value: "140" },
-    { label: "Russia", value: "115" },
-    { label: "UAE", value: "100" },
-    { label: "US", value: "30" },
-    { label: "China", value: "30" },
-  ];
+  const handleCheckboxChange = useCallback((columnName, value) => {
+    const valStr = value.toString();
+    setSelectedFilters((prev) => {
+      const currentSelections = prev[columnName] || [];
+      const updatedSelections = currentSelections.includes(valStr)
+        ? currentSelections.filter((item) => item !== valStr)
+        : [...currentSelections, valStr];
+      return {
+        ...prev,
+        [columnName]: updatedSelections,
+      };
+    });
+  }, []);
 
   const chartConfigs = {
     type: "column2d",
-    width: "700",
+    width: "100%",
     height: "400",
     dataFormat: "json",
     dataSource: {
       chart: {
-        caption: "Countries With Most Oil Reserves [2017-18]",
-        subCaption: "In MMbbl = One Million barrels",
-        xAxisName: "Country",
-        yAxisName: "Reserves (MMbbl)",
-        numberSuffix: "K",
+        caption: "Cloud Cost By Service",
+        subCaption: loadingChart
+          ? "Loading..."
+          : `Grouped by ${columns[activeTabIndex] || "category"}`,
+        xAxisName: "Service",
+        yAxisName: "Cost ($)",
+        numberPrefix: "$",
         theme: "fusion",
+        paletteColors: "#5D62B5,#29C3BE,#F2726F,#FFC533,#62B58F",
       },
       data: chartData,
     },
@@ -163,39 +159,21 @@ const handleFilterChange = ()=>{
 
   return (
     <div className="cost-explorer" style={{ padding: "2rem" }}>
-      {/* Account Selector */}
       <section style={{ marginBottom: "1.5rem" }}>
         <label>
-          <strong>Select AWS Account:</strong>
+          <strong>AWS Account:</strong> {selectedAccountId}
         </label>
-        {accountsLoading ? (
-          <p>Loading accounts...</p>
-        ) : accountError ? (
-          <div className="error-message">
-            {accountError}
-            <button onClick={() => window.location.reload()}>Retry</button>
-          </div>
-        ) : (
-          <select value={selectedAccountId} onChange={handleAccountChange}>
-            <option value="">-- Choose Account --</option>
-            {assignedAccounts.map((acc) => (
-              <option key={acc.id} value={acc.accountId}>
-                {acc.name} ({acc.accountId})
-              </option>
-            ))}
-          </select>
-        )}
       </section>
 
-      {/* //tabbed accounts */}
-
-      <Box sx={{ maxWidth: { xs: 320, sm: 480 }, bgcolor: "background.paper" }}>
+      <Box
+        sx={{ maxWidth: { xs: 320, sm: 1261 }, bgcolor: "background.paper" }}
+      >
         <Tabs
-          value={value}
-          onChange={handleChange}
+          value={activeTabIndex}
+          onChange={handleTabChange}
           variant="scrollable"
           scrollButtons="auto"
-          aria-label="scrollable auto tabs example"
+          aria-label="column grouping tabs"
         >
           {columns.map((col, index) => (
             <Tab key={index} label={col} />
@@ -203,50 +181,36 @@ const handleFilterChange = ()=>{
         </Tabs>
       </Box>
 
-      {/* Date Picker */}
       <section style={{ marginBottom: "1.5rem" }}>
         <label>
           <strong>Select Date:</strong>
         </label>
         <div>
-          <DatePicker selected={date} onChange={(date) => setDate(date)} />
+          <DatePicker
+            selected={date}
+            onChange={(date) => setDate(date)}
+            dateFormat="MM/yyyy"
+            showMonthYearPicker
+          />
         </div>
       </section>
 
-      {/* Multi-Select Tags */}
-      <section style={{ marginBottom: "1.5rem" }}>
-        <FormControl sx={{ m: 1, width: 300 }}>
-          <InputLabel id="tag-multi-select-label">Tags</InputLabel>
-          <Select
-            labelId="tag-multi-select-label"
-            id="tag-multi-select"
-            multiple
-            value={personName}
-            onChange={handleTagChange}
-            input={<OutlinedInput label="Tags" />}
-            renderValue={(selected) => selected.join(", ")}
-            MenuProps={MenuProps}
-          >
-            {names.map((name) => (
-              <MenuItem key={name} value={name}>
-                <Checkbox checked={personName.includes(name)} onClick={handleFilterChange}/>
-                 {/* checkbox dropdown with html css and js 
-                 and will populate the dat from 
-
-                  */}
-              
-
-                <ListItemText primary={name} />
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </section>
-
-      {/* Chart */}
-      <section>
-        <ReactFC {...chartConfigs} />
-      </section>
+      <div className="costExplorerContent">
+        <div className="main-content">
+          <section>
+            <ReactFC {...chartConfigs} />
+          </section>
+        </div>
+        <div className="filterSidebar">
+          <FilterSidebar
+            columns={columns}
+            filterOptions={filterOptions}
+            selectedFilters={selectedFilters}
+            onColumnClick={handleColumnClick}
+            onCheckboxChange={handleCheckboxChange}
+          />
+        </div>
+      </div>
     </div>
   );
 };

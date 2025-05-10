@@ -1,5 +1,5 @@
 export const saveIamRoleInfo = (data) => {
-  // Validate data before dispatching
+ 
   const payload = {
     roleARN: data.roleARN?.trim() || '',
     accountName: data.accountName?.trim() || '',
@@ -17,9 +17,7 @@ export const completeOnboarding = (responseData) => ({
   payload: responseData
 });
 
-// export const resetOnboarding = () => ({
-//   type: 'RESET_ONBOARDING'
-// });
+
 
 export const clearOnboardingData = () => ({
   type: "CLEAR_ONBOARDING_DATA",

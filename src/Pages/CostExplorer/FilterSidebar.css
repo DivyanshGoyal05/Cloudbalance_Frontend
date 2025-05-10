@@ -1,0 +1,111 @@
+.filter-sidebar {
+    width: 300px;
+    padding: 16px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    height: calc(100vh - 32px);
+    overflow-y: auto;
+    position: sticky;
+    top: 16px;
+}
+
+.filter-sidebar h3 {
+    margin: 0 0 16px 0;
+    padding-bottom: 8px;
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #1976d2;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.filter-column-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.filter-column-item {
+    margin-bottom: 12px;
+}
+
+.filter-column-header {
+    cursor: pointer;
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s;
+}
+
+.filter-column-header:hover {
+    background-color: #f5f5f5;
+}
+
+.filter-column-header::before {
+    content: "►";
+    font-size: 0.8rem;
+    margin-right: 8px;
+    transition: transform 0.2s;
+}
+
+.filter-column-header.active::before {
+    transform: rotate(90deg);
+}
+
+.filter-options {
+    padding-left: 24px;
+    margin-top: 8px;
+    animation: fadeIn 0.2s ease-in;
+}
+
+.filter-option {
+    display: flex;
+    align-items: center;
+    padding: 4px 0;
+}
+
+.filter-option label {
+    cursor: pointer;
+    margin-left: 8px;
+    font-size: 0.875rem;
+    transition: color 0.2s;
+}
+
+.filter-option:hover label {
+    color: #1976d2;
+}
+
+/* Checkbox customization */
+.filter-option .MuiCheckbox-root {
+    padding: 4px;
+    color: rgba(0, 0, 0, 0.54);
+}
+
+.filter-option .Mui-checked {
+    color: #1976d2;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+    .filter-sidebar {
+        width: 100%;
+        height: auto;
+        position: static;
+        margin-bottom: 20px;
+    }
+}
