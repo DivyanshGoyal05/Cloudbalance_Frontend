@@ -20,7 +20,7 @@ const Header = () => {
     <div className="header">
       <div className="header-left">
         {/* <h2 className="logo">CloudBalance</h2> */}
-        <img src="../" alt="CloudKeeper Image" />
+        <img src="../" alt="CloudBalance Image" />
       </div>
 
       {isLoggedIn && (

@@ -1,8 +1,8 @@
-import React, { useState } from "react";
 import axios from "axios";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { loginSuccess } from "../redux/actions/authActions";
 import { useNavigate } from "react-router-dom";
+import { loginSuccess } from "../redux/actions/authActions";
 import "../Styles/LoginPage.css"; // Import the enhanced CSS for login page
 
 const LoginPage = () => {
@@ -49,7 +49,7 @@ const LoginPage = () => {
         <div className="Logo">
           <img
             src="/home/divyansh/BootCamp/Frontend/my-cloud-app/src/Pages/logo_2025-01-30T12_32_13 (copy).png"
-            alt="CloudKeeper Logo"
+            alt="CloudBalance Logo"
           />
         </div>
         <h2>Login to view your potential savings</h2>
