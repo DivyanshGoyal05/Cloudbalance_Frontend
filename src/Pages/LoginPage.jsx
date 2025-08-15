@@ -46,12 +46,12 @@ const LoginPage = () => {
   return (
     <div className="login-container">
       <div className="login-card">
-        {/* <div className="Logo">
+        <div className="Logo">
           <img
-            src="public\assets\Images\image.png"
+            src="assets/Images/image.png"
             alt="CloudBalance Logo"
           />
-        </div> */}
+        </div>
         <h2>Login to view your potential savings</h2>
         <form onSubmit={handleLogin}>
           <label htmlFor="">username</label>
