@@ -48,7 +48,7 @@ const LoginPage = () => {
       <div className="login-card">
         <div className="Logo">
           <img
-            src="/home/divyansh/BootCamp/Frontend/my-cloud-app/src/Pages/logo_2025-01-30T12_32_13 (copy).png"
+            src="src\assets\Images\image.png"
             alt="CloudBalance Logo"
           />
         </div>

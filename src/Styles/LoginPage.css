@@ -3,6 +3,7 @@
 /* General Page Styling */
 .login-container {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
@@ -63,3 +64,13 @@
     margin-top: 1rem;
     color: red;
 }
+
+.Logo img{
+  
+    max-height: 25%;
+    width: 50%;
+  
+    
+}
+
+
