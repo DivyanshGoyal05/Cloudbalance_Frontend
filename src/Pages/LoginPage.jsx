@@ -48,7 +48,7 @@ const LoginPage = () => {
       <div className="login-card">
         <div className="Logo">
           <img
-            src="src\assets\Images\image.png"
+            src="public\assets\Images\image.png"
             alt="CloudBalance Logo"
           />
         </div>
