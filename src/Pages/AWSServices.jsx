@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
-import axios from "../api/axiosConfig";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import axios from "../api/axiosConfig";
 import "../Styles/AWSServices.css";
 
 const AWSServices = () => {
   const { role: userRole } = useSelector((state) => state.auth);
-  const { accounts: assignedAccounts } = useSelector((state) => state.accounts); // Assuming accountsReducer stores this
+  const assignedAccounts = useSelector((state) => state.user?.accounts || []);
 
   const [selectedAccountId, setSelectedAccountId] = useState("");
   const [awsData, setAwsData] = useState({ ec2: [], s3: [], rds: [] });

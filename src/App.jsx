@@ -51,6 +51,7 @@ import DashboardLayout from "./Pages/DashboardLayout";
 import OnboardingPageTwo from "../src/Pages/OnboardingPageTwo";
 import OnboardingPageThree from "../src/Pages/OnboardingPageThree";
 import OnboardingPageOne from "./Pages/OnboardingPageOne";
+import SignupPage from "./Pages/SignupPage";
 import "./App.css";
 
 function App() {
@@ -61,6 +62,7 @@ function App() {
           <Routes>
             {/* Public route for login */}
             <Route path="/" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
 
             {/* Protected routes inside DashboardLayout */}
             <Route path="/dashboard" element={<DashboardLayout />}>

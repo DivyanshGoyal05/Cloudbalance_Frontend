@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { loginSuccess } from "../redux/actions/authActions";
 import "../Styles/LoginPage.css"; // Import the enhanced CSS for login page
 
@@ -16,6 +16,7 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
+      
       // Make the API call
       const response = await axios.post("http://localhost:8080/api/login", {
         username,
@@ -28,13 +29,15 @@ const LoginPage = () => {
       // Dispatch login action to Redux
       dispatch(loginSuccess({ username, role }));
 
+
+      
       // Redirect based on role
       if (role === "ADMIN") {
-        navigate("/dashboard/usermanagement");
+        navigate("/dashboard/aws-services");
       } else if (role === "READONLY") {
         navigate("/dashboard/costexplorer");
       } else if (role === "CUSTOMER") {
-        navigate("/dashboard/aws-services");
+        navigate("/dashboard/usermanagement");
       } else {
         setError("Unknown role.");
       }
@@ -70,6 +73,9 @@ const LoginPage = () => {
           />
           <button type="submit">Login</button>
         </form>
+        <p style={{ marginTop: "12px" }}>
+          New here? <Link to="/signup">Create an account</Link>
+        </p>
 
         {error && <p>{error}</p>}
       </div>
@@ -78,3 +84,4 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
+
