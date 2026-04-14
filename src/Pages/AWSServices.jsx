@@ -1,49 +1,77 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "../api/axiosConfig";
+import { demoAccounts, demoAwsDataByAccount } from "../demo/demoData";
 import "../Styles/AWSServices.css";
 
 const AWSServices = () => {
-  const { role: userRole } = useSelector((state) => state.auth);
+  const { role: userRole, isGuest } = useSelector((state) => state.auth);
   const assignedAccounts = useSelector((state) => state.user?.accounts || []);
 
   const [selectedAccountId, setSelectedAccountId] = useState("");
   const [awsData, setAwsData] = useState({ ec2: [], s3: [], rds: [] });
   const [loading, setLoading] = useState(false);
 
+  const availableAccounts =
+    isGuest && assignedAccounts.length === 0 ? demoAccounts : assignedAccounts;
+
   const handleAccountChange = (e) => {
     setSelectedAccountId(e.target.value);
   };
 
-  const fetchAWSData = async (accountId) => {
-    setLoading(true);
-    try {
-      const response = await axios.get(`/api/aws-services/${accountId}`);
-      setAwsData(response.data);
-    } catch (error) {
-      console.error("Error fetching AWS data", error);
-    }
-    setLoading(false);
-  };
-
   useEffect(() => {
-    if (selectedAccountId) {
-      fetchAWSData(selectedAccountId);
+    if (isGuest && !selectedAccountId && availableAccounts.length > 0) {
+      setSelectedAccountId(availableAccounts[0].accountId);
+      return;
     }
-  }, [selectedAccountId]);
+
+    if (selectedAccountId) {
+      const loadAwsData = async () => {
+        setLoading(true);
+        if (isGuest) {
+          setAwsData(
+            demoAwsDataByAccount[selectedAccountId] || {
+              ec2: [],
+              s3: [],
+              rds: [],
+            }
+          );
+          setLoading(false);
+          return;
+        }
+
+        try {
+          const response = await axios.get(
+            `/api/aws-services/${selectedAccountId}`
+          );
+          setAwsData(response.data);
+        } catch (error) {
+          console.error("Error fetching AWS data", error);
+        }
+        setLoading(false);
+      };
+
+      loadAwsData();
+    }
+  }, [availableAccounts, isGuest, selectedAccountId]);
 
   return (
     <div className="aws-container">
       <h2 className="heading">AWS Services Dashboard</h2>
       <p className="subheading">Monitor AWS resources by account</p>
+      {isGuest && (
+        <p className="demo-banner">
+          Guest preview is showing sample AWS inventory for demonstration.
+        </p>
+      )}
 
       <div className="account-selector">
         <label>Select AWS Account:</label>
         <select value={selectedAccountId} onChange={handleAccountChange}>
           <option value="">-- Choose Account --</option>
           {(userRole === "ADMIN" || userRole === "READONLY"
-            ? assignedAccounts
-            : assignedAccounts.filter((acc) => acc.assignedToUser)
+            ? availableAccounts
+            : availableAccounts.filter((acc) => acc.assignedToUser)
           ).map((acc) => (
             <option key={acc.accountId} value={acc.accountId}>
               {acc.name} ({acc.accountId})

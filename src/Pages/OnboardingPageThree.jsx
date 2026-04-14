@@ -11,6 +11,7 @@ function OnboardingPageThree() {
 
   // Getting the state from Redux
   const onboardingData = useSelector((state) => state.onboarding);
+  const { isGuest } = useSelector((state) => state.auth);
 
   const reportName = "ck-tuner-275595855473-hourly-cur";
   const reportPrefix = "275595855473";
@@ -34,6 +35,22 @@ function OnboardingPageThree() {
     setIsSubmitting(true);
 
     try {
+      if (isGuest) {
+        dispatch({
+          type: "COMPLETE_ONBOARDING",
+          payload: {
+            cloudAccountId: onboardingData.accountid || "243517980012",
+            cloudAccountName: onboardingData.accountname || "Acme Retail Prod",
+            roleARN: onboardingData.roleARN || "arn:aws:iam::243517980012:role/cloudbalance-demo",
+            reportName,
+            reportPrefix,
+          },
+        });
+        alert("Guest preview complete. This simulates the onboarding finish step.");
+        navigate("/dashboard");
+        return;
+      }
+
       // Get auth token directly from localStorage
       const authToken = localStorage.getItem("authToken");
 
@@ -82,6 +99,12 @@ function OnboardingPageThree() {
             <p className="form-sub-heading">
               Create a Cost & Usage Report by following these steps
             </p>
+            {isGuest && (
+              <p className="demo-helper-text">
+                Guest preview mode will simulate submission instead of creating
+                a real cloud account.
+              </p>
+            )}
           </div>
 
           <div className="form-body">

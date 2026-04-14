@@ -16,6 +16,17 @@
     margin-bottom: 20px;
 }
 
+.demo-banner {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: rgba(67, 152, 215, 0.1);
+    color: #2f6590;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
 .account-selector {
     margin-bottom: 20px;
 }

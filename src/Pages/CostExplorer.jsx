@@ -9,7 +9,6 @@ Charts(FusionCharts); // Register chart types
 const CostExplorer = () => {
   const [costData, setCostData] = useState([]);
   const [serviceData, setServiceData] = useState([]);
-  const [selectedAccount, setSelectedAccount] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {

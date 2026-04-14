@@ -1,40 +1,45 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
-import "./UserManagement.css";
+import { useNavigate } from "react-router-dom";
+import api from "../api/axiosConfig";
+import { demoAccounts, demoUsers } from "../demo/demoData";
+import "../Styles/AddUser.css";
 
-function EditUser() {
-  const { id } = useParams();
+function AddUser() {
   const dispatch = useDispatch();
-  const { accounts } = useSelector((state) => state);
+  const { users = [], accounts = [] } = useSelector((state) => state.user);
+  const { isGuest } = useSelector((state) => state.auth);
   const navigate = useNavigate();
-  const URL = "http://localhost:8080";
 
   const [user, setUser] = useState({
     username: "",
     name: "",
     password: "",
-    role: "Customer",
+    role: "CUSTOMER",
     assignedAccounts: [],
   });
 
-  // Fetch user data when component loads
   useEffect(() => {
-    const fetchUser = async () => {
+    if (accounts.length > 0) {
+      return;
+    }
+
+    if (isGuest) {
+      dispatch({ type: "SET_ACCOUNTS", payload: demoAccounts });
+      return;
+    }
+
+    const loadAccounts = async () => {
       try {
-        const response = await axios.get(`${URL}/users/${id}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-          },
-        });
-        setUser({ ...response.data, password: "" }); // Don't show existing password
+        const response = await api.get("/cloudAccount/getall");
+        dispatch({ type: "SET_ACCOUNTS", payload: response.data });
       } catch (error) {
-        console.error("Error fetching user:", error);
+        console.error("Error fetching accounts:", error);
       }
     };
-    fetchUser();
-  }, [id]);
+
+    loadAccounts();
+  }, [accounts.length, dispatch, isGuest]);
 
   const handleInputChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
@@ -58,30 +63,47 @@ function EditUser() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      await axios.put(`${URL}/users/${id}`, user, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
+    if (isGuest) {
+      dispatch({
+        type: "SET_USERS",
+        payload: [
+          ...(users.length > 0 ? users : demoUsers),
+          {
+            id: Date.now(),
+            username: user.username || "new.demo.user",
+            name: user.name || "New Demo User",
+            role: user.role,
+            assignedAccounts: (accounts || [])
+              .filter((account) => user.assignedAccounts.includes(account.id))
+              .map((account) => account.accountId),
+          },
+        ],
       });
+      alert("Guest preview saved a demo user locally for this session.");
+      navigate("/dashboard/usermanagement");
+      return;
+    }
 
-      // Refresh the users list in Redux
-      const response = await axios.get(`${URL}/users/fetchall`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
-      });
+    try {
+      await api.post("/users/create", user);
+
+      const response = await api.get("/users/all");
       dispatch({ type: "SET_USERS", payload: response.data });
 
-      navigate("/users"); // Go back to user list
+      navigate("/dashboard/usermanagement");
     } catch (error) {
-      console.error("Error updating user:", error);
+      console.error("Error creating user:", error);
     }
   };
 
   return (
     <div className="form-container">
-      <h2>Edit User</h2>
+      <h2>Add New User</h2>
+      {isGuest && (
+        <p className="demo-note">
+          Guest preview mode will not create a real backend user.
+        </p>
+      )}
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Username:</label>
@@ -90,7 +112,7 @@ function EditUser() {
             name="username"
             value={user.username}
             onChange={handleInputChange}
-            disabled
+            required
             className="form-input"
           />
         </div>
@@ -108,14 +130,14 @@ function EditUser() {
         </div>
 
         <div className="form-group">
-          <label>New Password (leave blank to keep current):</label>
+          <label>Password:</label>
           <input
             type="password"
             name="password"
             value={user.password}
             onChange={handleInputChange}
+            required
             className="form-input"
-            placeholder="Enter new password if changing"
           />
         </div>
 
@@ -127,13 +149,13 @@ function EditUser() {
             onChange={handleInputChange}
             className="form-input"
           >
-            <option value="Admin">Admin</option>
-            <option value="ReadOnly">ReadOnly</option>
-            <option value="Customer">Customer</option>
+            <option value="ADMIN">ADMIN</option>
+            <option value="READONLY">READONLY</option>
+            <option value="CUSTOMER">CUSTOMER</option>
           </select>
         </div>
 
-        {user.role === "Customer" && (
+        {user.role === "CUSTOMER" && (
           <div className="form-group">
             <label>Assign Accounts:</label>
             <div className="accounts-checkbox-group">
@@ -156,11 +178,11 @@ function EditUser() {
 
         <div className="form-actions">
           <button type="submit" className="submit-btn">
-            Save Changes
+            Create User
           </button>
           <button
             type="button"
-            onClick={() => navigate("/users")}
+            onClick={() => navigate("/dashboard/usermanagement")}
             className="cancel-btn"
           >
             Cancel
@@ -171,4 +193,4 @@ function EditUser() {
   );
 }
 
-export default EditUser;
+export default AddUser;

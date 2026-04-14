@@ -31,7 +31,8 @@ const initialState = {
     isLoggedIn: false,
     username: null,
     token: null,
-    role: null // 'ADMIN', 'READONLY', 'CUSTOMER'
+    role: null,
+    isGuest: false
 };
 
 export default function authReducer(state = initialState, action) {

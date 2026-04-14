@@ -1,53 +1,60 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../api/axiosConfig";
+import { demoAccounts, demoUsers } from "../demo/demoData";
 import "../Styles/UserManagement.css";
 
 function UserManagement() {
   const dispatch = useDispatch();
-  const { users = [], accounts } = useSelector((state) => state);
+  const { users = [], accounts = [] } = useSelector((state) => state.user);
+  const { isGuest } = useSelector((state) => state.auth);
   const navigate = useNavigate();
-  const URL = "http://localhost:8080";
 
-  // Fetch users and accounts
   useEffect(() => {
-    fetchUsers();
-    fetchAccounts();
-  }, []);
+    const loadData = async () => {
+      if (isGuest) {
+        dispatch({ type: "SET_USERS", payload: demoUsers });
+        dispatch({ type: "SET_ACCOUNTS", payload: demoAccounts });
+        return;
+      }
 
-  const fetchUsers = async () => {
-    try {
-      const response = await axios.get(`${URL}/users/fetchall`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
-      });
-      dispatch({ type: "SET_USERS", payload: response.data });
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
-  };
+      try {
+        const [usersResponse, accountsResponse] = await Promise.all([
+          api.get("/users/all"),
+          api.get("/cloudAccount/getall"),
+        ]);
 
-  const fetchAccounts = async () => {
-    try {
-      const response = await axios.get(`${URL}/cloudAccount/getall`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
-      });
-      dispatch({ type: "SET_ACCOUNTS", payload: response.data });
-    } catch (error) {
-      console.error("Error fetching accounts:", error);
-    }
-  };
+        dispatch({ type: "SET_USERS", payload: usersResponse.data });
+        dispatch({ type: "SET_ACCOUNTS", payload: accountsResponse.data });
+      } catch (error) {
+        console.error("Error loading user management data:", error);
+      }
+    };
+
+    loadData();
+  }, [dispatch, isGuest]);
 
   return (
     <div className="user-management-container">
-      <h2>User Management</h2>
-      <button onClick={() => navigate("/users/add")}>+ Add User</button>
+      <div className="user-management-header">
+        <div>
+          <p className="section-kicker">Administration</p>
+          <h2>User Management</h2>
+          <p className="section-description">
+            Review access, roles, and account assignments from one place.
+          </p>
+          {isGuest && (
+            <p className="demo-note">
+              Guest preview uses demo users and sample account assignments.
+            </p>
+          )}
+        </div>
+        <button onClick={() => navigate("/users/add")}>+ Add User</button>
+      </div>
 
-      <table>
+      <div className="table-shell">
+        <table>
         <thead>
           <tr>
             <th>Username</th>
@@ -60,16 +67,22 @@ function UserManagement() {
         <tbody>
           {users.map((user) => (
             <tr key={user.id}>
-              <td>{user.username}</td>
-              <td>{user.name}</td>
-              <td>{user.role}</td>
-              <td>
+              <td data-label="Username">{user.username}</td>
+              <td data-label="Name">{user.name}</td>
+              <td data-label="Role">
+                <span className="role-pill">{user.role}</span>
+              </td>
+              <td data-label="Assigned Accounts">
                 {accounts
-                  .filter((acc) => user.assignedAccounts.includes(acc.id))
+                  .filter(
+                    (acc) =>
+                      user.assignedAccounts.includes(acc.accountId) ||
+                      user.assignedAccounts.includes(acc.id)
+                  )
                   .map((a) => a.name)
                   .join(", ") || "None"}
               </td>
-              <td>
+              <td data-label="Action">
                 <button onClick={() => navigate(`/users/edit/${user.id}`)}>
                   Edit
                 </button>
@@ -77,7 +90,8 @@ function UserManagement() {
             </tr>
           ))}
         </tbody>
-      </table>
+        </table>
+      </div>
     </div>
   );
 }

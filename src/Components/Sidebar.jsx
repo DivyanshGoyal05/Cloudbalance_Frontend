@@ -1,25 +1,38 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import "../Styles/sidebar.css";
 
 const Sidebar = ({ role }) => {
+  const adminLinks = [
+    { to: "/dashboard/usermanagement", label: "User Management" },
+    { to: "/dashboard/onboarding", label: "Onboarding" },
+    { to: "/dashboard/cost-explorer", label: "Cost Explorer" },
+    { to: "/dashboard/aws-services", label: "AWS Services" },
+  ];
+
+  const memberLinks = [
+    { to: "/dashboard/cost-explorer", label: "Cost Explorer" },
+    { to: "/dashboard/aws-services", label: "AWS Services" },
+  ];
+
+  const links = role === "ADMIN" ? adminLinks : memberLinks;
+
   return (
     <div className="sidebar">
-      {role === "ADMIN" && (
-        <>
-          <Link to="/dashboard/usermanagement">User Management</Link>
-          <Link to="/dashboard/onboarding">Onboarding</Link>
-          <Link to="/dashboard/cost-explorer">Cost Explorer</Link>
-          <Link to="/dashboard/aws-services">AWS Services</Link>
-        </>
-      )}
-
-      {(role === "READONLY" || role === "CUSTOMER") && (
-        <>
-          <Link to="/dashboard/cost-explorer">Cost Explorer</Link>
-          <Link to="/dashboard/aws-services">AWS Services</Link>
-        </>
-      )}
+      <div className="sidebar-section-label">Workspace</div>
+      <div className="sidebar-links">
+        {links.map((link) => (
+          <NavLink
+            key={link.to}
+            to={link.to}
+            className={({ isActive }) =>
+              isActive ? "sidebar-link active" : "sidebar-link"
+            }
+          >
+            {link.label}
+          </NavLink>
+        ))}
+      </div>
     </div>
   );
 };

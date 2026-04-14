@@ -2,13 +2,13 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../redux/actions/authActions";
 import { useNavigate } from "react-router-dom";
-import "../Styles/Header.css"; // Import the updated CSS for the header
+import "../Styles/Header.css";
 
 const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { username, isLoggedIn } = useSelector((state) => state.auth);
+  const { username, isLoggedIn, isGuest } = useSelector((state) => state.auth);
 
   const handleLogout = () => {
     dispatch(logout()); // clear Redux state
@@ -19,15 +19,24 @@ const Header = () => {
   return (
     <div className="header">
       <div className="header-left">
-        {/* <h2 className="logo">CloudBalance</h2> */}
-        <img src="../" alt="CloudBalance Image" />
+        <img
+          src="/assets/Images/image.png"
+          alt="CloudBalance"
+          className="header-logo"
+        />
+        <div className="header-brand">
+          <span className="header-eyebrow">Cloud cost command center</span>
+          <h1>CloudBalance</h1>
+        </div>
       </div>
 
       {isLoggedIn && (
         <div className="header-right">
-          <span>Welcome, {username}!</span>
+          <span className="header-user">
+            {isGuest ? "Guest Preview" : `Welcome, ${username}`}
+          </span>
           <button onClick={handleLogout} className="logout-btn">
-            Logout
+            {isGuest ? "Exit Preview" : "Logout"}
           </button>
         </div>
       )}
